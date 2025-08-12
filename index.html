@@ -1,0 +1,2648 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyWellhome - แอปสุขภาพครบครัน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Sarabun', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .wellpoint-glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 10px #fbbf24; }
+            to { box-shadow: 0 0 20px #fbbf24, 0 0 30px #fbbf24; }
+        }
+        
+        .chat-bubble {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white p-4 sticky top-0 z-50">
+        <div class="flex items-center justify-between max-w-md mx-auto">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                    <span class="text-blue-600 font-bold text-sm">MW</span>
+                </div>
+                <h1 class="text-xl font-bold">MyWellHome</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="wellpoint-glow bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-bold">
+                    <span id="wellpoints">1,250</span> WP
+                </div>
+                <button onclick="toggleLanguage()" class="bg-white/20 px-2 py-1 rounded text-sm">
+                    <span id="currentLang">TH</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="max-w-md mx-auto bg-white min-h-screen">
+        <!-- Navigation Tabs -->
+        <div class="flex bg-white border-b sticky top-16 z-40 text-xs">
+            <button onclick="showTab('home')" class="tab-btn flex-1 py-3 text-center font-medium text-blue-600 border-b-2 border-blue-600" id="home-tab">
+                🏠 Home
+            </button>
+            <button onclick="showTab('chat')" class="tab-btn flex-1 py-3 text-center font-medium text-gray-500" id="chat-tab">
+                🤖 AI Doctor
+            </button>
+            <button onclick="showTab('services')" class="tab-btn flex-1 py-3 text-center font-medium text-gray-500" id="services-tab">
+                🏥 Services
+            </button>
+            <button onclick="showTab('fitness')" class="tab-btn flex-1 py-3 text-center font-medium text-gray-500" id="fitness-tab">
+                💪 Fitness
+            </button>
+            <button onclick="showTab('cart')" class="tab-btn flex-1 py-3 text-center font-medium text-gray-500 relative" id="cart-tab">
+                🛒 Cart
+                <span id="cartBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
+            </button>
+            <button onclick="showTab('position')" class="tab-btn flex-1 py-3 text-center font-medium text-gray-500" id="position-tab">
+                📍 Position
+            </button>
+            <button onclick="showTab('profile')" class="tab-btn flex-1 py-3 text-center font-medium text-gray-500" id="profile-tab">
+                👤 Profile
+            </button>
+        </div>
+
+        <!-- Home Tab -->
+        <div id="home-content" class="tab-content p-4">
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <div class="card-hover bg-gradient-to-r from-green-400 to-green-600 p-4 rounded-xl text-white cursor-pointer" onclick="openHealthCheck()">
+                    <div class="text-2xl mb-2">🏃‍♂️</div>
+                    <div class="font-semibold">Health Check</div>
+                    <div class="text-sm opacity-90">Free health screening</div>
+                </div>
+                <div class="card-hover bg-gradient-to-r from-pink-400 to-pink-600 p-4 rounded-xl text-white cursor-pointer" onclick="openCompanionService('dining')">
+                    <div class="text-2xl mb-2">👥</div>
+                    <div class="font-semibold">Find Companion</div>
+                    <div class="text-sm opacity-90">Hire for dining/travel</div>
+                </div>
+                <div class="card-hover bg-gradient-to-r from-blue-400 to-blue-600 p-4 rounded-xl text-white cursor-pointer" onclick="openInsurance()">
+                    <div class="text-2xl mb-2">🏥</div>
+                    <div class="font-semibold">Check Insurance</div>
+                    <div class="text-sm opacity-90">Social security</div>
+                </div>
+                <div class="card-hover bg-gradient-to-r from-purple-400 to-purple-600 p-4 rounded-xl text-white cursor-pointer" onclick="openMealPlan()">
+                    <div class="text-2xl mb-2">🍎</div>
+                    <div class="font-semibold">Meal Planning</div>
+                    <div class="text-sm opacity-90">Healthy nutrition</div>
+                </div>
+            </div>
+
+            <!-- Step Counter -->
+            <div class="bg-gradient-to-r from-green-400 to-blue-500 rounded-xl p-4 mb-6 text-white">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-bold">👟 Daily Steps</h3>
+                    <button onclick="syncSteps()" class="bg-white/20 px-3 py-1 rounded-full text-sm">Sync</button>
+                </div>
+                <div class="text-center mb-4">
+                    <div class="text-4xl font-bold mb-2" id="stepCount">5,660</div>
+                    <div class="text-sm opacity-90">steps today</div>
+                </div>
+                <div class="grid grid-cols-3 gap-4 text-center text-sm">
+                    <div>
+                        <div class="font-bold" id="distance">4.2</div>
+                        <div class="opacity-90">km</div>
+                    </div>
+                    <div>
+                        <div class="font-bold" id="calories">280</div>
+                        <div class="opacity-90">cal</div>
+                    </div>
+                    <div>
+                        <div class="font-bold" id="activeTime">45</div>
+                        <div class="opacity-90">min</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Challenge -->
+            <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-bold text-gray-800">🏆 Today's Challenge</h3>
+                    <span class="text-yellow-600 font-bold">+100 WP</span>
+                </div>
+                <div class="text-sm text-gray-600 mb-3">Walk 8,000 steps (2,340 steps remaining)</div>
+                <div class="bg-yellow-200 rounded-full h-2 mb-3">
+                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 70%"></div>
+                </div>
+                <button onclick="joinChallenge()" class="w-full bg-yellow-500 text-white py-2 rounded-lg font-medium">
+                    Challenge Friends
+                </button>
+            </div>
+
+            <!-- Weekly Rewards -->
+            <div class="bg-gradient-to-r from-purple-400 to-pink-500 rounded-xl p-4 mb-6 text-white">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-bold">🎁 This Week's Rewards</h3>
+                    <span class="text-sm opacity-90">6 days left</span>
+                </div>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between items-center">
+                        <span>🏥 Free Health Checkup</span>
+                        <span class="bg-white/20 px-2 py-1 rounded">5,000 WP</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>💊 Medicine Discount 50%</span>
+                        <span class="bg-white/20 px-2 py-1 rounded">3,000 WP</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>🍎 Nutrition Consultation</span>
+                        <span class="bg-white/20 px-2 py-1 rounded">2,500 WP</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>💰 Cash 200 Baht</span>
+                        <span class="bg-white/20 px-2 py-1 rounded">2,000 WP</span>
+                    </div>
+                </div>
+                <button onclick="viewAllRewards()" class="w-full bg-white/20 text-white py-2 rounded-lg font-medium mt-3">
+                    View All Rewards
+                </button>
+            </div>
+
+            <!-- Hospital Partnerships -->
+            <div class="mb-6">
+                <h3 class="font-bold text-gray-800 mb-3">🏥 Partner Hospitals</h3>
+                <div class="space-y-3">
+                    <div class="bg-white border rounded-lg p-3 flex items-center justify-between">
+                        <div>
+                            <div class="font-medium">Ramathibodi Hospital</div>
+                            <div class="text-sm text-green-600">12 beds available</div>
+                        </div>
+                        <button onclick="bookBed('rama')" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Book Bed</button>
+                    </div>
+                    <div class="bg-white border rounded-lg p-3 flex items-center justify-between">
+                        <div>
+                            <div class="font-medium">Chulalongkorn Hospital</div>
+                            <div class="text-sm text-yellow-600">5 beds available</div>
+                        </div>
+                        <button onclick="bookBed('chula')" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Book Bed</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Friend Location Widget -->
+            <div class="bg-gradient-to-r from-blue-400 to-purple-500 rounded-xl p-4 mb-6 text-white">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-bold">📍 Friends Nearby</h3>
+                    <button onclick="viewAllFriends()" class="bg-white/20 px-3 py-1 rounded-full text-sm">View All</button>
+                </div>
+                <div class="flex space-x-3 overflow-x-auto">
+                    <div class="flex-shrink-0 text-center">
+                        <div class="w-12 h-12 bg-green-400 rounded-full flex items-center justify-center text-white font-bold mb-1">A</div>
+                        <div class="text-xs">Anna</div>
+                        <div class="text-xs opacity-75">0.5km</div>
+                    </div>
+                    <div class="flex-shrink-0 text-center">
+                        <div class="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center text-white font-bold mb-1">J</div>
+                        <div class="text-xs">John</div>
+                        <div class="text-xs opacity-75">1.2km</div>
+                    </div>
+                    <div class="flex-shrink-0 text-center">
+                        <div class="w-12 h-12 bg-pink-400 rounded-full flex items-center justify-center text-white font-bold mb-1">M</div>
+                        <div class="text-xs">Mary</div>
+                        <div class="text-xs opacity-75">2.1km</div>
+                    </div>
+                    <div class="flex-shrink-0 text-center">
+                        <div class="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center text-white font-bold mb-1">+</div>
+                        <div class="text-xs">Add</div>
+                        <div class="text-xs opacity-75">Friend</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Recent Bookings -->
+            <div class="bg-white border rounded-xl p-4 mb-6">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-bold text-gray-800">📋 My Recent Bookings</h3>
+                    <button onclick="viewAllBookings()" class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm">View All</button>
+                </div>
+                <div id="homeBookingsList" class="space-y-2">
+                    <div class="text-sm text-gray-500 text-center py-4">No bookings yet</div>
+                </div>
+            </div>
+
+            <!-- Medicine Scanner -->
+            <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+                <h3 class="font-bold text-gray-800 mb-3">💊 Medicine Scanner</h3>
+                <p class="text-sm text-gray-600 mb-3">Check safety & authenticity</p>
+                <button onclick="scanMedicine()" class="w-full bg-red-500 text-white py-2 rounded-lg font-medium">
+                    📷 Open Camera Scanner
+                </button>
+            </div>
+        </div>
+
+        <!-- AI Chat Tab -->
+        <div id="chat-content" class="tab-content hidden">
+            <div class="h-96 overflow-y-auto p-4 space-y-3" id="chatMessages">
+                <div class="chat-bubble bg-blue-100 p-3 rounded-lg max-w-xs">
+                    <div class="text-sm font-medium text-blue-800 mb-1">AI Doctor</div>
+                    <div class="text-sm">Hello! I'm the AI Doctor from MyWellhome, ready to help with your health concerns. How can I assist you today?</div>
+                </div>
+            </div>
+            <div class="p-4 border-t bg-white sticky bottom-0">
+                <div class="flex space-x-2">
+                    <input type="text" id="chatInput" placeholder="Type your health question..." 
+                           class="flex-1 border rounded-lg px-3 py-2 text-sm" 
+                           onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button onclick="sendMessage()" class="bg-blue-500 text-white px-4 py-2 rounded-lg">
+                        Send
+                    </button>
+                </div>
+                <div class="flex space-x-2 mt-2">
+                    <button onclick="quickQuestion('Headache')" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs">Headache</button>
+                    <button onclick="quickQuestion('Fever')" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs">Fever</button>
+                    <button onclick="quickQuestion('Stomach pain')" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs">Stomach pain</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart Tab -->
+        <div id="cart-content" class="tab-content hidden p-4">
+            <div class="space-y-4">
+                <!-- Cart Items -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-4">🛒 Shopping Cart</h3>
+                    <div id="cartItems" class="space-y-3">
+                        <div class="text-sm text-gray-500 text-center py-8">Your cart is empty</div>
+                    </div>
+                    <div id="cartTotal" class="hidden border-t pt-3 mt-3">
+                        <div class="flex justify-between items-center font-bold">
+                            <span>Total:</span>
+                            <span id="totalAmount">$0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div id="paymentSection" class="bg-white border rounded-xl p-4 hidden">
+                    <h3 class="font-bold text-gray-800 mb-3">💳 Payment Method</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-2">
+                            <input type="radio" name="payment" value="credit" class="text-blue-600">
+                            <span class="text-sm">💳 Credit Card</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="radio" name="payment" value="promptpay" class="text-blue-600" checked>
+                            <span class="text-sm">📱 PromptPay</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="radio" name="payment" value="cash" class="text-blue-600">
+                            <span class="text-sm">💰 Cash on Delivery</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="radio" name="payment" value="wellpoints" class="text-blue-600">
+                            <span class="text-sm">⭐ WellPoints (Balance: <span id="wpBalance">1,250</span> WP)</span>
+                        </label>
+                    </div>
+                    <button onclick="processPayment()" class="w-full bg-green-500 text-white py-3 rounded-lg font-medium mt-4">
+                        💰 Proceed to Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fitness Tab -->
+        <div id="fitness-content" class="tab-content hidden p-4">
+            <div class="space-y-4">
+                <!-- Home Workout Courses -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-4">🏠 Home Workout Courses</h3>
+                    
+                    <!-- Yoga & Meditation -->
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="toggleFitnessCategory('yoga')">
+                            <h4 class="font-semibold text-purple-600">🧘‍♀️ Yoga & Meditation</h4>
+                            <span class="text-purple-600">▼</span>
+                        </div>
+                        <div id="yoga-courses" class="space-y-2 ml-4">
+                            <div class="flex justify-between items-center p-2 bg-purple-50 rounded text-sm">
+                                <div>
+                                    <div>Morning Yoga Flow - Sarah Kim</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.9 • 30 min • Beginner</div>
+                                    <div class="text-xs text-green-600">💰 Free Trial - $15/month</div>
+                                </div>
+                                <button onclick="bookTrainer('Sarah Kim', 'Morning Yoga Flow', 15, 'yoga')" class="bg-purple-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-purple-50 rounded text-sm">
+                                <div>
+                                    <div>Evening Meditation - Master Chen</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.8 • 45 min • All Levels</div>
+                                    <div class="text-xs text-green-600">💰 $20/month</div>
+                                </div>
+                                <button onclick="bookTrainer('Master Chen', 'Evening Meditation', 20, 'meditation')" class="bg-purple-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-purple-50 rounded text-sm">
+                                <div>
+                                    <div>Power Yoga - Lisa Strong</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.7 • 60 min • Advanced</div>
+                                    <div class="text-xs text-green-600">💰 $25/month</div>
+                                </div>
+                                <button onclick="bookTrainer('Lisa Strong', 'Power Yoga', 25, 'yoga')" class="bg-purple-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cardio & HIIT -->
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="toggleFitnessCategory('cardio')">
+                            <h4 class="font-semibold text-red-600">🔥 Cardio & HIIT</h4>
+                            <span class="text-red-600">▼</span>
+                        </div>
+                        <div id="cardio-courses" class="space-y-2 ml-4">
+                            <div class="flex justify-between items-center p-2 bg-red-50 rounded text-sm">
+                                <div>
+                                    <div>HIIT Bootcamp - Mike Thunder</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.9 • 45 min • Intermediate</div>
+                                    <div class="text-xs text-green-600">💰 $30/month</div>
+                                </div>
+                                <button onclick="bookTrainer('Mike Thunder', 'HIIT Bootcamp', 30, 'hiit')" class="bg-red-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-red-50 rounded text-sm">
+                                <div>
+                                    <div>Dance Cardio - Emma Moves</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.8 • 40 min • All Levels</div>
+                                    <div class="text-xs text-green-600">💰 $22/month</div>
+                                </div>
+                                <button onclick="bookTrainer('Emma Moves', 'Dance Cardio', 22, 'dance')" class="bg-red-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-red-50 rounded text-sm">
+                                <div>
+                                    <div>Fat Burn Circuit - Coach Alex</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.7 • 35 min • Beginner</div>
+                                    <div class="text-xs text-green-600">💰 Free Trial - $18/month</div>
+                                </div>
+                                <button onclick="bookTrainer('Coach Alex', 'Fat Burn Circuit', 18, 'cardio')" class="bg-red-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Strength Training -->
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="toggleFitnessCategory('strength')">
+                            <h4 class="font-semibold text-blue-600">💪 Strength Training</h4>
+                            <span class="text-blue-600">▼</span>
+                        </div>
+                        <div id="strength-courses" class="space-y-2 ml-4">
+                            <div class="flex justify-between items-center p-2 bg-blue-50 rounded text-sm">
+                                <div>
+                                    <div>Bodyweight Strength - John Fit</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.9 • 50 min • Intermediate</div>
+                                    <div class="text-xs text-green-600">💰 $28/month</div>
+                                </div>
+                                <button onclick="bookTrainer('John Fit', 'Bodyweight Strength', 28, 'strength')" class="bg-blue-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-blue-50 rounded text-sm">
+                                <div>
+                                    <div>Core & Abs - Anna Core</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.8 • 30 min • All Levels</div>
+                                    <div class="text-xs text-green-600">💰 $20/month</div>
+                                </div>
+                                <button onclick="bookTrainer('Anna Core', 'Core & Abs', 20, 'core')" class="bg-blue-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-blue-50 rounded text-sm">
+                                <div>
+                                    <div>Upper Body Power - Tom Strong</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.7 • 45 min • Advanced</div>
+                                    <div class="text-xs text-green-600">💰 $32/month</div>
+                                </div>
+                                <button onclick="bookTrainer('Tom Strong', 'Upper Body Power', 32, 'strength')" class="bg-blue-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pilates & Flexibility -->
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="toggleFitnessCategory('pilates')">
+                            <h4 class="font-semibold text-green-600">🤸‍♀️ Pilates & Flexibility</h4>
+                            <span class="text-green-600">▼</span>
+                        </div>
+                        <div id="pilates-courses" class="space-y-2 ml-4">
+                            <div class="flex justify-between items-center p-2 bg-green-50 rounded text-sm">
+                                <div>
+                                    <div>Mat Pilates - Grace Flow</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.9 • 40 min • Beginner</div>
+                                    <div class="text-xs text-green-600">💰 Free Trial - $24/month</div>
+                                </div>
+                                <button onclick="bookTrainer('Grace Flow', 'Mat Pilates', 24, 'pilates')" class="bg-green-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-green-50 rounded text-sm">
+                                <div>
+                                    <div>Stretch & Recovery - Zen Master</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.8 • 25 min • All Levels</div>
+                                    <div class="text-xs text-green-600">💰 $15/month</div>
+                                </div>
+                                <button onclick="bookTrainer('Zen Master', 'Stretch & Recovery', 15, 'stretch')" class="bg-green-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Healthy Cooking & Nutrition -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-4">🍎 Healthy Cooking & Nutrition</h3>
+                    
+                    <!-- Weight Loss Recipes -->
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="toggleFitnessCategory('weightloss')">
+                            <h4 class="font-semibold text-orange-600">⚖️ Weight Loss Recipes</h4>
+                            <span class="text-orange-600">▼</span>
+                        </div>
+                        <div id="weightloss-recipes" class="space-y-2 ml-4">
+                            <div class="border rounded-lg p-3">
+                                <div class="font-medium text-sm mb-2">🥗 Low-Carb Buddha Bowl</div>
+                                <div class="text-xs text-gray-600 mb-2">Ingredients: Quinoa, Avocado, Spinach, Chickpeas, Cherry tomatoes, Cucumber, Lemon dressing</div>
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-green-600">🔥 320 calories • 🕐 15 min</span>
+                                    <button onclick="viewRecipe('Low-Carb Buddha Bowl')" class="bg-orange-500 text-white px-2 py-1 rounded">View Recipe</button>
+                                </div>
+                            </div>
+                            <div class="border rounded-lg p-3">
+                                <div class="font-medium text-sm mb-2">🐟 Grilled Salmon with Vegetables</div>
+                                <div class="text-xs text-gray-600 mb-2">Ingredients: Fresh salmon, Broccoli, Bell peppers, Olive oil, Garlic, Herbs</div>
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-green-600">🔥 280 calories • 🕐 20 min</span>
+                                    <button onclick="viewRecipe('Grilled Salmon with Vegetables')" class="bg-orange-500 text-white px-2 py-1 rounded">View Recipe</button>
+                                </div>
+                            </div>
+                            <div class="border rounded-lg p-3">
+                                <div class="font-medium text-sm mb-2">🥤 Green Detox Smoothie</div>
+                                <div class="text-xs text-gray-600 mb-2">Ingredients: Spinach, Banana, Apple, Ginger, Lemon, Coconut water</div>
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-green-600">🔥 150 calories • 🕐 5 min</span>
+                                    <button onclick="viewRecipe('Green Detox Smoothie')" class="bg-orange-500 text-white px-2 py-1 rounded">View Recipe</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Muscle Building Meals -->
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="toggleFitnessCategory('muscle')">
+                            <h4 class="font-semibold text-blue-600">💪 Muscle Building Meals</h4>
+                            <span class="text-blue-600">▼</span>
+                        </div>
+                        <div id="muscle-recipes" class="space-y-2 ml-4">
+                            <div class="border rounded-lg p-3">
+                                <div class="font-medium text-sm mb-2">🍗 Protein Power Bowl</div>
+                                <div class="text-xs text-gray-600 mb-2">Ingredients: Grilled chicken, Brown rice, Black beans, Sweet potato, Greek yogurt</div>
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-green-600">🔥 450 calories • 🏋️ 35g protein</span>
+                                    <button onclick="viewRecipe('Protein Power Bowl')" class="bg-blue-500 text-white px-2 py-1 rounded">View Recipe</button>
+                                </div>
+                            </div>
+                            <div class="border rounded-lg p-3">
+                                <div class="font-medium text-sm mb-2">🥩 Lean Beef Stir-fry</div>
+                                <div class="text-xs text-gray-600 mb-2">Ingredients: Lean beef, Mixed vegetables, Soy sauce, Garlic, Ginger, Brown rice</div>
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-green-600">🔥 380 calories • 🏋️ 28g protein</span>
+                                    <button onclick="viewRecipe('Lean Beef Stir-fry')" class="bg-blue-500 text-white px-2 py-1 rounded">View Recipe</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Healthy Snacks -->
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="toggleFitnessCategory('snacks')">
+                            <h4 class="font-semibold text-green-600">🥜 Healthy Snacks</h4>
+                            <span class="text-green-600">▼</span>
+                        </div>
+                        <div id="snacks-recipes" class="space-y-2 ml-4">
+                            <div class="border rounded-lg p-3">
+                                <div class="font-medium text-sm mb-2">🥜 Energy Balls</div>
+                                <div class="text-xs text-gray-600 mb-2">Ingredients: Dates, Almonds, Oats, Chia seeds, Coconut flakes</div>
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-green-600">🔥 120 calories • 🕐 10 min</span>
+                                    <button onclick="viewRecipe('Energy Balls')" class="bg-green-500 text-white px-2 py-1 rounded">View Recipe</button>
+                                </div>
+                            </div>
+                            <div class="border rounded-lg p-3">
+                                <div class="font-medium text-sm mb-2">🥒 Veggie Chips</div>
+                                <div class="text-xs text-gray-600 mb-2">Ingredients: Sweet potato, Beets, Kale, Olive oil, Sea salt</div>
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-green-600">🔥 80 calories • 🕐 25 min</span>
+                                    <button onclick="viewRecipe('Veggie Chips')" class="bg-green-500 text-white px-2 py-1 rounded">View Recipe</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ingredient Scanner -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-3">📱 Ingredient Scanner</h3>
+                    <p class="text-sm text-gray-600 mb-3">Scan ingredients to get nutritional info and healthy recipe suggestions</p>
+                    <button onclick="scanIngredients()" class="w-full bg-green-500 text-white py-2 rounded-lg font-medium mb-3">
+                        📷 Scan Ingredients
+                    </button>
+                    
+                    <!-- Recent Scans -->
+                    <div class="border-t pt-3">
+                        <h4 class="font-medium text-sm mb-2">Recent Scans:</h4>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                <span>🥕 Carrots, 🥬 Spinach, 🍗 Chicken</span>
+                                <button onclick="suggestRecipe(['carrots', 'spinach', 'chicken'])" class="text-blue-600">Get Recipe</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                <span>🍌 Banana, 🥛 Milk, 🥜 Almonds</span>
+                                <button onclick="suggestRecipe(['banana', 'milk', 'almonds'])" class="text-blue-600">Get Recipe</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Fitness Progress -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-3">📊 My Fitness Progress</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="text-center p-3 bg-purple-50 rounded">
+                            <div class="text-2xl font-bold text-purple-600">12</div>
+                            <div class="text-xs text-gray-600">Workouts This Month</div>
+                        </div>
+                        <div class="text-center p-3 bg-red-50 rounded">
+                            <div class="text-2xl font-bold text-red-600">2.5kg</div>
+                            <div class="text-xs text-gray-600">Weight Lost</div>
+                        </div>
+                        <div class="text-center p-3 bg-blue-50 rounded">
+                            <div class="text-2xl font-bold text-blue-600">45min</div>
+                            <div class="text-xs text-gray-600">Avg Workout Time</div>
+                        </div>
+                        <div class="text-center p-3 bg-green-50 rounded">
+                            <div class="text-2xl font-bold text-green-600">85%</div>
+                            <div class="text-xs text-gray-600">Goal Achievement</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Tab -->
+        <div id="services-content" class="tab-content hidden p-4">
+            <div class="space-y-4">
+                <!-- Health Programs by Category -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-4">🏥 Health Programs</h3>
+                    
+                    <!-- Skin & Beauty -->
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="toggleCategory('skin')">
+                            <h4 class="font-semibold text-pink-600">✨ Skin & Beauty</h4>
+                            <span class="text-pink-600">▼</span>
+                        </div>
+                        <div id="skin-programs" class="space-y-2 ml-4">
+                            <div class="flex justify-between items-center p-2 bg-pink-50 rounded text-sm">
+                                <div>
+                                    <div>Acne Treatment Program</div>
+                                    <div class="text-xs text-gray-500">30% OFF - $150</div>
+                                    <div class="text-xs text-blue-600">📍 Ramathibodi Hospital - Ratchathewi</div>
+                                </div>
+                                <button onclick="addToCart('Acne Treatment', 150, 'Ramathibodi Hospital')" class="bg-pink-500 text-white px-3 py-1 rounded text-xs">Add to Cart</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-pink-50 rounded text-sm">
+                                <div>
+                                    <div>Anti-Aging Skincare</div>
+                                    <div class="text-xs text-gray-500">25% OFF - $200</div>
+                                    <div class="text-xs text-blue-600">📍 Chulalongkorn Hospital - Pathumwan</div>
+                                </div>
+                                <button onclick="addToCart('Anti-Aging Skincare', 200, 'Chulalongkorn Hospital')" class="bg-pink-500 text-white px-3 py-1 rounded text-xs">Add to Cart</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-pink-50 rounded text-sm">
+                                <div>
+                                    <div>Dermatology Consultation</div>
+                                    <div class="text-xs text-gray-500">Free Check - $0</div>
+                                    <div class="text-xs text-blue-600">📍 Siriraj Hospital - Bangkok Noi</div>
+                                </div>
+                                <button onclick="addToCart('Dermatology Consultation', 0, 'Siriraj Hospital')" class="bg-pink-500 text-white px-3 py-1 rounded text-xs">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Oral Health -->
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="toggleCategory('oral')">
+                            <h4 class="font-semibold text-blue-600">🦷 Oral Health</h4>
+                            <span class="text-blue-600">▼</span>
+                        </div>
+                        <div id="oral-programs" class="space-y-2 ml-4">
+                            <div class="flex justify-between items-center p-2 bg-blue-50 rounded text-sm">
+                                <div>
+                                    <div>Dental Cleaning</div>
+                                    <div class="text-xs text-gray-500">40% OFF - $80</div>
+                                    <div class="text-xs text-blue-600">📍 Bangkok Dental Center - Silom</div>
+                                </div>
+                                <button onclick="addToCart('Dental Cleaning', 80, 'Bangkok Dental Center')" class="bg-blue-500 text-white px-3 py-1 rounded text-xs">Add to Cart</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-blue-50 rounded text-sm">
+                                <div>
+                                    <div>Teeth Whitening</div>
+                                    <div class="text-xs text-gray-500">35% OFF - $120</div>
+                                    <div class="text-xs text-blue-600">📍 Smile Clinic - Sukhumvit</div>
+                                </div>
+                                <button onclick="addToCart('Teeth Whitening', 120, 'Smile Clinic')" class="bg-blue-500 text-white px-3 py-1 rounded text-xs">Add to Cart</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-blue-50 rounded text-sm">
+                                <div>
+                                    <div>Orthodontic Consultation</div>
+                                    <div class="text-xs text-gray-500">Free - $0</div>
+                                    <div class="text-xs text-blue-600">📍 Dental Hospital - Ratchadamri</div>
+                                </div>
+                                <button onclick="addToCart('Orthodontic Consultation', 0, 'Dental Hospital')" class="bg-blue-500 text-white px-3 py-1 rounded text-xs">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mental Health -->
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="toggleCategory('mental')">
+                            <h4 class="font-semibold text-purple-600">🧠 Mental Health</h4>
+                            <span class="text-purple-600">▼</span>
+                        </div>
+                        <div id="mental-programs" class="space-y-2 ml-4">
+                            <div class="flex justify-between items-center p-2 bg-purple-50 rounded text-sm">
+                                <div>
+                                    <div>Stress Management</div>
+                                    <div class="text-xs text-gray-500">20% OFF - $100</div>
+                                    <div class="text-xs text-blue-600">📍 Mind Wellness Center - Phrom Phong</div>
+                                </div>
+                                <button onclick="addToCart('Stress Management', 100, 'Mind Wellness Center')" class="bg-purple-500 text-white px-3 py-1 rounded text-xs">Add to Cart</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-purple-50 rounded text-sm">
+                                <div>
+                                    <div>Depression Counseling</div>
+                                    <div class="text-xs text-gray-500">Free Session - $0</div>
+                                    <div class="text-xs text-blue-600">📍 Bangkok Mental Health - Sathorn</div>
+                                </div>
+                                <button onclick="addToCart('Depression Counseling', 0, 'Bangkok Mental Health')" class="bg-purple-500 text-white px-3 py-1 rounded text-xs">Add to Cart</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-purple-50 rounded text-sm">
+                                <div>
+                                    <div>Anxiety Treatment</div>
+                                    <div class="text-xs text-gray-500">25% OFF - $90</div>
+                                    <div class="text-xs text-blue-600">📍 Peaceful Mind Clinic - Asoke</div>
+                                </div>
+                                <button onclick="addToCart('Anxiety Treatment', 90, 'Peaceful Mind Clinic')" class="bg-purple-500 text-white px-3 py-1 rounded text-xs">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Physical Health -->
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="toggleCategory('physical')">
+                            <h4 class="font-semibold text-green-600">💪 Physical Health</h4>
+                            <span class="text-green-600">▼</span>
+                        </div>
+                        <div id="physical-programs" class="space-y-2 ml-4">
+                            <div class="flex justify-between items-center p-2 bg-green-50 rounded text-sm">
+                                <div>
+                                    <div>Full Body Checkup</div>
+                                    <div class="text-xs text-gray-500">50% OFF - $250</div>
+                                    <div class="text-xs text-blue-600">📍 Bangkok Hospital - Pathumwan</div>
+                                </div>
+                                <button onclick="addToCart('Full Body Checkup', 250, 'Bangkok Hospital')" class="bg-green-500 text-white px-3 py-1 rounded text-xs">Add to Cart</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-green-50 rounded text-sm">
+                                <div>
+                                    <div>Blood Test Package</div>
+                                    <div class="text-xs text-gray-500">30% OFF - $70</div>
+                                    <div class="text-xs text-blue-600">📍 Lab Center - Thonglor</div>
+                                </div>
+                                <button onclick="addToCart('Blood Test Package', 70, 'Lab Center')" class="bg-green-500 text-white px-3 py-1 rounded text-xs">Add to Cart</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-green-50 rounded text-sm">
+                                <div>
+                                    <div>Heart Health Screening</div>
+                                    <div class="text-xs text-gray-500">Free - $0</div>
+                                    <div class="text-xs text-blue-600">📍 Cardio Clinic - Ploenchit</div>
+                                </div>
+                                <button onclick="addToCart('Heart Health Screening', 0, 'Cardio Clinic')" class="bg-green-500 text-white px-3 py-1 rounded text-xs">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Doctor Selection -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-3">👨‍⚕️ Select Doctor</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 border rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white">👨‍⚕️</div>
+                                <div>
+                                    <div class="font-medium">Dr. Smith Johnson</div>
+                                    <div class="text-sm text-gray-600">Cardiologist • ⭐ 4.9</div>
+                                    <div class="text-xs text-green-600">Available Today</div>
+                                    <div class="text-xs font-bold text-blue-600">$80/hour</div>
+                                </div>
+                            </div>
+                            <button onclick="selectDoctor('Dr. Smith Johnson', 'Cardiologist', 80)" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Select</button>
+                        </div>
+                        <div class="flex items-center justify-between p-3 border rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-pink-500 rounded-full flex items-center justify-center text-white">👩‍⚕️</div>
+                                <div>
+                                    <div class="font-medium">Dr. Sarah Wilson</div>
+                                    <div class="text-sm text-gray-600">Dermatologist • ⭐ 4.8</div>
+                                    <div class="text-xs text-green-600">Available Tomorrow</div>
+                                    <div class="text-xs font-bold text-pink-600">$75/hour</div>
+                                </div>
+                            </div>
+                            <button onclick="selectDoctor('Dr. Sarah Wilson', 'Dermatologist', 75)" class="bg-pink-500 text-white px-3 py-1 rounded text-sm">Select</button>
+                        </div>
+                        <div class="flex items-center justify-between p-3 border rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white">👨‍⚕️</div>
+                                <div>
+                                    <div class="font-medium">Dr. Michael Brown</div>
+                                    <div class="text-sm text-gray-600">Psychiatrist • ⭐ 4.7</div>
+                                    <div class="text-xs text-yellow-600">Busy - Next Week</div>
+                                    <div class="text-xs font-bold text-purple-600">$90/hour</div>
+                                </div>
+                            </div>
+                            <button onclick="selectDoctor('Dr. Michael Brown', 'Psychiatrist', 90)" class="bg-purple-500 text-white px-3 py-1 rounded text-sm">Select</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Companion Services -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-3">👥 Companion Services</h3>
+                    
+                    <!-- Dining Companions -->
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-orange-600 mb-2">🍽️ Dining Companions</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center p-2 bg-orange-50 rounded text-sm">
+                                <div>
+                                    <div>Sarah Chen (28)</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.8 • $20/hour</div>
+                                    <div class="text-xs text-blue-600">📍 Available in Sukhumvit, Silom</div>
+                                </div>
+                                <button onclick="bookCompanionDirect('Sarah Chen', 20, 'dining', 'Sukhumvit')" class="bg-orange-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-orange-50 rounded text-sm">
+                                <div>
+                                    <div>Mike Johnson (32)</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.9 • $25/hour</div>
+                                    <div class="text-xs text-blue-600">📍 Available in Siam, Thonglor</div>
+                                </div>
+                                <button onclick="bookCompanionDirect('Mike Johnson', 25, 'dining', 'Siam')" class="bg-orange-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Travel Companions -->
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-green-600 mb-2">✈️ Travel Companions</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center p-2 bg-green-50 rounded text-sm">
+                                <div>
+                                    <div>David Kim (30)</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.9 • $35/hour</div>
+                                    <div class="text-xs text-blue-600">📍 Available in Chatuchak, Sukhumvit</div>
+                                </div>
+                                <button onclick="bookCompanionDirect('David Kim', 35, 'travel', 'Chatuchak')" class="bg-green-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-green-50 rounded text-sm">
+                                <div>
+                                    <div>Emma Davis (27)</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.8 • $30/hour</div>
+                                    <div class="text-xs text-blue-600">📍 Available in Silom, Thonglor</div>
+                                </div>
+                                <button onclick="bookCompanionDirect('Emma Davis', 30, 'travel', 'Silom')" class="bg-green-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Movie Companions -->
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-purple-600 mb-2">🎬 Movie Companions</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center p-2 bg-purple-50 rounded text-sm">
+                                <div>
+                                    <div>Jenny Liu (25)</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.8 • $15/hour</div>
+                                    <div class="text-xs text-blue-600">📍 Available in Siam, Sukhumvit</div>
+                                </div>
+                                <button onclick="bookCompanionDirect('Jenny Liu', 15, 'movie', 'Siam')" class="bg-purple-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-purple-50 rounded text-sm">
+                                <div>
+                                    <div>Tom Wilson (31)</div>
+                                    <div class="text-xs text-gray-500">⭐ 4.7 • $18/hour</div>
+                                    <div class="text-xs text-blue-600">📍 Available in Thonglor, Chatuchak</div>
+                                </div>
+                                <button onclick="bookCompanionDirect('Tom Wilson', 18, 'movie', 'Thonglor')" class="bg-purple-500 text-white px-3 py-1 rounded text-xs">Book</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 p-2 bg-blue-50 rounded text-xs">
+                        💡 Book by time slots: Morning (9-12), Afternoon (13-17), Evening (18-22)
+                    </div>
+                </div>
+
+                <!-- My Bookings -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-3">📅 My Bookings</h3>
+                    <div id="bookingsList" class="space-y-2">
+                        <div class="text-sm text-gray-500 text-center py-4">No bookings yet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Position Tab -->
+        <div id="position-content" class="tab-content hidden p-4">
+            <div class="space-y-4">
+                <!-- Map Area -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-3">🗺️ Friend Locations</h3>
+                    <div class="bg-green-100 h-64 rounded-lg relative overflow-hidden">
+                        <!-- Simulated Map -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-green-200 to-blue-200">
+                            <!-- Your location -->
+                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                <div class="w-4 h-4 bg-red-500 rounded-full border-2 border-white shadow-lg pulse-dot"></div>
+                                <div class="text-xs font-bold text-red-600 mt-1">You</div>
+                            </div>
+                            <!-- Friend locations -->
+                            <div class="absolute top-1/3 left-1/3">
+                                <div class="w-3 h-3 bg-blue-500 rounded-full border border-white"></div>
+                                <div class="text-xs text-blue-600 mt-1">Anna</div>
+                            </div>
+                            <div class="absolute top-2/3 right-1/3">
+                                <div class="w-3 h-3 bg-green-500 rounded-full border border-white"></div>
+                                <div class="text-xs text-green-600 mt-1">John</div>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-2 right-2 bg-white px-2 py-1 rounded text-xs">
+                            📍 Bangkok, Thailand
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Create Group -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-3">👥 Friend Groups</h3>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <button onclick="createGroup()" class="bg-blue-500 text-white py-2 rounded-lg text-sm">
+                            + Create Group
+                        </button>
+                        <button onclick="joinGroup()" class="bg-green-500 text-white py-2 rounded-lg text-sm">
+                            🔗 Join Group
+                        </button>
+                    </div>
+                    <div id="groupsList" class="space-y-2">
+                        <div class="border rounded-lg p-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="font-medium">Health Buddies</div>
+                                <span class="text-sm text-green-600">3 members</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mb-2">Code: HB2024</div>
+                            <div class="flex -space-x-2 mb-2">
+                                <div class="w-6 h-6 bg-blue-400 rounded-full border border-white"></div>
+                                <div class="w-6 h-6 bg-green-400 rounded-full border border-white"></div>
+                                <div class="w-6 h-6 bg-purple-400 rounded-full border border-white"></div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="viewGroup('Health Buddies')" class="text-sm text-blue-600">View Group</button>
+                                <button onclick="shareGroupCode('HB2024')" class="text-sm text-green-600">Share Code</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location Sharing -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-3">📍 Location Sharing</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm">Share my location</span>
+                            <button onclick="toggleLocationSharing()" class="bg-green-500 text-white px-3 py-1 rounded text-xs" id="locationToggle">
+                                ON
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm">Auto-update location</span>
+                            <button onclick="toggleAutoUpdate()" class="bg-green-500 text-white px-3 py-1 rounded text-xs" id="autoUpdateToggle">
+                                ON
+                            </button>
+                        </div>
+                        <div class="text-xs text-gray-500">
+                            📍 Current: Lat 13.7563, Lng 100.5018
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profile-content" class="tab-content hidden p-4">
+            <div class="space-y-4">
+                <!-- User Info -->
+                <div class="bg-white border rounded-xl p-4 text-center">
+                    <div class="w-20 h-20 bg-blue-500 rounded-full mx-auto mb-3 flex items-center justify-center text-white text-2xl">
+                        👤
+                    </div>
+                    <h3 class="font-bold text-gray-800">สมชาย ใจดี</h3>
+                    <p class="text-sm text-gray-600">สมาชิกตั้งแต่ 2024</p>
+                </div>
+
+                <!-- WellPoints -->
+                <div class="bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-xl p-4 text-white">
+                    <h3 class="font-bold mb-2">💰 WellPoints</h3>
+                    <div class="text-2xl font-bold mb-2">1,250 WP</div>
+                    <p class="text-sm opacity-90 mb-3">แลกเป็นเงินสด หรือคูปองโรงพยาบาล</p>
+                    <button onclick="redeemPoints()" class="bg-white text-yellow-600 px-4 py-2 rounded-lg font-medium">
+                        แลกของรางวัล
+                    </button>
+                </div>
+
+                <!-- Health Stats -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-3">📊 สถิติสุขภาพ</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-sm">ก้าวเดินวันนี้</span>
+                            <span class="font-medium">5,660 ก้าว</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm">แคลอรี่เผาผลาญ</span>
+                            <span class="font-medium">280 cal</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm">ระยะทางเดิน</span>
+                            <span class="font-medium">4.2 กม.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Goals -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-3">🎯 Health Goals</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm">Daily Steps Goal</span>
+                            <span class="font-medium text-blue-600">8,000 steps</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm">Weight Goal</span>
+                            <span class="font-medium text-green-600">65 kg</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm">Water Intake</span>
+                            <span class="font-medium text-blue-600">2.5L/day</span>
+                        </div>
+                        <button onclick="editGoals()" class="w-full bg-blue-500 text-white py-2 rounded-lg text-sm">
+                            Edit Goals
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Medical History -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-3">📋 Medical History</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Blood Type</span>
+                            <span class="font-medium text-red-600">O+</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Allergies</span>
+                            <span class="font-medium">Peanuts, Shellfish</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Last Checkup</span>
+                            <span class="font-medium">15 Jan 2024</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Emergency Contact</span>
+                            <span class="font-medium">081-234-5678</span>
+                        </div>
+                    </div>
+                    <button onclick="updateMedicalInfo()" class="w-full bg-red-500 text-white py-2 rounded-lg text-sm mt-3">
+                        Update Medical Info
+                    </button>
+                </div>
+
+                <!-- Achievements -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-3">🏆 Achievements</h3>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="text-center p-2 bg-yellow-50 rounded">
+                            <div class="text-2xl">🥇</div>
+                            <div class="text-xs">Step Master</div>
+                        </div>
+                        <div class="text-center p-2 bg-green-50 rounded">
+                            <div class="text-2xl">💪</div>
+                            <div class="text-xs">Health Hero</div>
+                        </div>
+                        <div class="text-center p-2 bg-blue-50 rounded">
+                            <div class="text-2xl">🎯</div>
+                            <div class="text-xs">Goal Getter</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="bg-white border rounded-xl p-4">
+                    <h3 class="font-bold text-gray-800 mb-3">⚙️ การตั้งค่า</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm">ขนาดตัวอักษร</span>
+                            <select onchange="changeFontSize(this.value)" class="text-sm border rounded px-2 py-1">
+                                <option value="normal">ปกติ</option>
+                                <option value="large">ใหญ่</option>
+                                <option value="xlarge">ใหญ่มาก</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm">เสียงอ่านออกเสียง</span>
+                            <button onclick="toggleVoice()" class="bg-green-500 text-white px-3 py-1 rounded text-xs">
+                                เปิด
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm">การแจ้งเตือน</span>
+                            <button onclick="toggleNotifications()" class="bg-green-500 text-white px-3 py-1 rounded text-xs" id="notificationToggle">
+                                เปิด
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm">ภาษา</span>
+                            <select onchange="changeLanguage(this.value)" class="text-sm border rounded px-2 py-1">
+                                <option value="th">ไทย</option>
+                                <option value="lo">ລາວ</option>
+                                <option value="km">ខ្មែរ</option>
+                                <option value="my">မြန်မာ</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-sm w-full p-6">
+            <h3 class="font-bold text-lg mb-4 text-center">🔐 Login to MyWellhome</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Email</label>
+                    <input type="email" id="loginEmail" class="w-full border rounded-lg px-3 py-2" placeholder="Enter your email">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Password</label>
+                    <input type="password" id="loginPassword" class="w-full border rounded-lg px-3 py-2" placeholder="Enter your password">
+                </div>
+                <button onclick="performLogin()" class="w-full bg-blue-500 text-white py-2 rounded-lg font-medium">
+                    Login
+                </button>
+                <div class="text-center">
+                    <button onclick="showRegister()" class="text-blue-600 text-sm">Don't have an account? Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Companion Service Modal -->
+    <div id="companionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-sm w-full p-6">
+            <h3 class="font-bold text-lg mb-4">👥 Companion Service</h3>
+            <div id="companionContent">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-sm w-full p-6">
+            <h3 class="font-bold text-lg mb-4">📅 Book Service</h3>
+            <div id="bookingContent">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Insurance Modal -->
+    <div id="insuranceModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-sm w-full p-6">
+            <h3 class="font-bold text-lg mb-4">🏥 เช็คสิทธิ์ประกันสังคม</h3>
+            <div class="space-y-3 mb-4">
+                <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <div class="font-medium text-green-800">สิทธิ์ใช้ได้</div>
+                    <div class="text-sm text-green-600">โรงพยาบาลรามาธิบดี</div>
+                    <div class="text-sm text-green-600">โรงพยาบาลจุฬาลงกรณ์</div>
+                    <div class="text-sm text-green-600">โรงพยาบาลศิริราช</div>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <div class="font-medium text-blue-800">เงินคงเหลือ</div>
+                    <div class="text-lg font-bold text-blue-600">15,000 บาท</div>
+                </div>
+            </div>
+            <button onclick="closeModal('insuranceModal')" class="w-full bg-blue-500 text-white py-2 rounded-lg">
+                ปิด
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentTab = 'home';
+        let wellPoints = 1250;
+        let currentLanguage = 'th';
+        let voiceEnabled = true;
+        let isLoggedIn = false;
+        let userBookings = [];
+        let locationSharing = true;
+        let autoUpdate = true;
+        let cartItems = [];
+        let selectedDoctor = null;
+        let notificationsEnabled = true;
+
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+                btn.classList.add('text-gray-500');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + '-content').classList.remove('hidden');
+            
+            // Add active class to selected tab
+            const activeTab = document.getElementById(tabName + '-tab');
+            activeTab.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+            activeTab.classList.remove('text-gray-500');
+            
+            currentTab = tabName;
+        }
+
+        // AI Chat functionality
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            addChatMessage(message, 'user');
+            input.value = '';
+
+            // Simulate AI response
+            setTimeout(() => {
+                const responses = [
+                    'Thank you for your question. Based on the symptoms you described, I recommend getting adequate rest and drinking plenty of water. If symptoms don\'t improve within 2-3 days, you should see a doctor.',
+                    'This symptom might be normal, but if you\'re concerned, I can schedule a doctor appointment for you. Would you like me to help arrange an appointment?',
+                    'Based on what you\'ve told me, I recommend seeing a doctor for further examination. Should I help schedule an appointment for you right away?'
+                ];
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                addChatMessage(randomResponse, 'ai');
+                
+                // Check for serious symptoms and offer doctor appointment
+                if (message.toLowerCase().includes('chest pain') || message.toLowerCase().includes('breathing') || message.toLowerCase().includes('heart')) {
+                    setTimeout(() => {
+                        addChatMessage('This symptom could be serious. I\'m scheduling a doctor appointment for you immediately. Contacting nearby hospitals...', 'ai');
+                        setTimeout(() => {
+                            addChatMessage('✅ Appointment confirmed! Ramathibodi Hospital today at 2:30 PM. Please arrive 15 minutes early.', 'ai');
+                        }, 2000);
+                    }, 1000);
+                }
+            }, 1000);
+        }
+
+        function addChatMessage(message, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-bubble';
+            
+            if (sender === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="bg-blue-500 text-white p-3 rounded-lg max-w-xs ml-auto">
+                        <div class="text-sm">${message}</div>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="bg-gray-100 p-3 rounded-lg max-w-xs">
+                        <div class="text-sm font-medium text-gray-800 mb-1">AI Doctor</div>
+                        <div class="text-sm">${message}</div>
+                    </div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Text-to-speech if enabled
+            if (voiceEnabled && sender === 'ai') {
+                speak(message);
+            }
+        }
+
+        // Login functions
+        function performLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (email && password) {
+                isLoggedIn = true;
+                document.getElementById('loginModal').classList.add('hidden');
+                
+                // Show success message with Thai language
+                const successModal = document.createElement('div');
+                successModal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+                successModal.innerHTML = `
+                    <div class="bg-white rounded-xl max-w-sm w-full p-6 text-center">
+                        <div class="text-6xl mb-4">🎉</div>
+                        <h3 class="font-bold text-xl text-green-600 mb-2">เข้าสู่ระบบสำเร็จ!</h3>
+                        <div class="text-gray-600 mb-4">
+                            <div class="mb-2">ยินดีต้อนรับสู่ MyWellhome</div>
+                            <div class="text-sm">อีเมล: ${email}</div>
+                        </div>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                            <div class="text-sm text-green-800">
+                                ✅ คุณสามารถใช้งานฟีเจอร์ทั้งหมดได้แล้ว<br>
+                                🎁 รับ 50 WellPoints ฟรี!
+                            </div>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove(); addWellPoints(50);" class="w-full bg-green-500 text-white py-2 rounded-lg font-medium">
+                            เริ่มใช้งาน
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(successModal);
+                
+                // Auto close after 3 seconds
+                setTimeout(() => {
+                    if (document.body.contains(successModal)) {
+                        successModal.remove();
+                        addWellPoints(50);
+                    }
+                }, 3000);
+                
+            } else {
+                alert('กรุณากรอกอีเมลและรหัสผ่าน');
+            }
+        }
+
+        function showRegister() {
+            alert('Registration feature coming soon! For demo, use any email/password to login.');
+        }
+
+        // Booking functions
+        function bookService(serviceName, price) {
+            if (!isLoggedIn) {
+                document.getElementById('loginModal').classList.remove('hidden');
+                return;
+            }
+            
+            const bookingId = 'BK' + Date.now();
+            const booking = {
+                id: bookingId,
+                service: serviceName,
+                price: price,
+                date: new Date().toLocaleDateString(),
+                status: 'Confirmed'
+            };
+            
+            userBookings.push(booking);
+            updateBookingsList();
+            
+            alert(`✅ Booking Confirmed!\n\nService: ${serviceName}\nPrice: $${price}\nBooking ID: ${bookingId}\nDate: ${booking.date}`);
+        }
+
+        function selectDoctor(doctorName, specialty, hourlyRate) {
+            if (!isLoggedIn) {
+                document.getElementById('loginModal').classList.remove('hidden');
+                return;
+            }
+            
+            selectedDoctor = { name: doctorName, specialty: specialty, rate: hourlyRate };
+            
+            // Show time selection modal
+            const timeSlots = ['09:00-10:00', '10:00-11:00', '11:00-12:00', '14:00-15:00', '15:00-16:00', '16:00-17:00'];
+            let timeOptions = '';
+            timeSlots.forEach(slot => {
+                timeOptions += `<button onclick="bookDoctorAppointment('${slot}')" class="w-full bg-blue-100 hover:bg-blue-200 p-2 rounded mb-2 text-sm">${slot} - $${hourlyRate}</button>`;
+            });
+            
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl max-w-sm w-full p-6">
+                    <h3 class="font-bold text-lg mb-4">📅 Select Time Slot</h3>
+                    <div class="mb-4">
+                        <div class="font-medium">${doctorName}</div>
+                        <div class="text-sm text-gray-600">${specialty} • $${hourlyRate}/hour</div>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        ${timeOptions}
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="w-full bg-gray-300 text-gray-700 py-2 rounded-lg">
+                        Cancel
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function bookDoctorAppointment(timeSlot) {
+            const bookingId = 'DR' + Date.now();
+            const booking = {
+                id: bookingId,
+                service: `${selectedDoctor.specialty} Consultation - ${selectedDoctor.name}`,
+                price: selectedDoctor.rate,
+                date: new Date().toLocaleDateString(),
+                time: timeSlot,
+                status: 'Confirmed'
+            };
+            
+            userBookings.push(booking);
+            updateBookingsList();
+            
+            // Remove modal
+            document.querySelector('.fixed.inset-0').remove();
+            
+            alert(`✅ Doctor Appointment Booked!\n\nDoctor: ${selectedDoctor.name}\nTime: ${timeSlot}\nPrice: $${selectedDoctor.rate}\nBooking ID: ${bookingId}`);
+        }
+
+        function openCompanionService(type) {
+            if (!isLoggedIn) {
+                document.getElementById('loginModal').classList.remove('hidden');
+                return;
+            }
+            
+            const services = {
+                dining: {
+                    title: '🍽️ Dining Companions',
+                    companions: [
+                        { name: 'Sarah Chen', age: 28, rating: 4.8, price: 20 },
+                        { name: 'Mike Johnson', age: 32, rating: 4.9, price: 25 },
+                        { name: 'Lisa Wong', age: 26, rating: 4.7, price: 18 }
+                    ]
+                },
+                travel: {
+                    title: '✈️ Travel Companions',
+                    companions: [
+                        { name: 'David Kim', age: 30, rating: 4.9, price: 35 },
+                        { name: 'Emma Davis', age: 27, rating: 4.8, price: 30 },
+                        { name: 'Alex Brown', age: 29, rating: 4.6, price: 28 }
+                    ]
+                },
+                movie: {
+                    title: '🎬 Movie Companions',
+                    companions: [
+                        { name: 'Jenny Liu', age: 25, rating: 4.8, price: 15 },
+                        { name: 'Tom Wilson', age: 31, rating: 4.7, price: 18 },
+                        { name: 'Amy Zhang', age: 24, rating: 4.9, price: 16 }
+                    ]
+                }
+            };
+            
+            const service = services[type];
+            let content = `<div class="space-y-3 mb-4">`;
+            
+            service.companions.forEach(companion => {
+                content += `
+                    <div class="border rounded-lg p-3">
+                        <div class="font-medium">${companion.name}</div>
+                        <div class="text-sm text-gray-600">Age ${companion.age} • ⭐ ${companion.rating}</div>
+                        <div class="text-sm text-green-600">$${companion.price}/hour</div>
+                        <div class="mt-2">
+                            <select id="timeSlot_${companion.name.replace(' ', '')}" class="w-full text-xs border rounded p-1 mb-2">
+                                <option value="morning">Morning (9-12) - 3 hours</option>
+                                <option value="afternoon">Afternoon (13-17) - 4 hours</option>
+                                <option value="evening">Evening (18-22) - 4 hours</option>
+                            </select>
+                            <button onclick="bookCompanionWithTime('${companion.name}', ${companion.price}, '${type}')" class="w-full bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">Book Now</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            content += `</div>
+                <button onclick="closeModal('companionModal')" class="w-full bg-gray-300 text-gray-700 py-2 rounded-lg">
+                    Close
+                </button>`;
+            
+            document.getElementById('companionContent').innerHTML = content;
+            document.getElementById('companionModal').classList.remove('hidden');
+        }
+
+        function bookCompanionWithTime(name, price, type) {
+            const timeSlot = document.getElementById('timeSlot_' + name.replace(' ', '')).value;
+            const timeSlots = {
+                morning: { hours: 3, time: '9:00-12:00' },
+                afternoon: { hours: 4, time: '13:00-17:00' },
+                evening: { hours: 4, time: '18:00-22:00' }
+            };
+            
+            const selectedSlot = timeSlots[timeSlot];
+            const totalPrice = price * selectedSlot.hours;
+            
+            // Add to cart instead of direct booking
+            const item = {
+                id: Date.now(),
+                name: `${type.charAt(0).toUpperCase() + type.slice(1)} Companion - ${name}`,
+                price: totalPrice,
+                location: `${selectedSlot.time} (${selectedSlot.hours}h)`,
+                quantity: 1
+            };
+            
+            cartItems.push(item);
+            updateCartDisplay();
+            updateCartBadge();
+            closeModal('companionModal');
+            
+            alert(`✅ Added to Cart!\n\nCompanion: ${name}\nService: ${type}\nTime: ${selectedSlot.time}\nDuration: ${selectedSlot.hours} hours\nTotal Price: $${totalPrice}`);
+        }
+
+        function bookCompanionDirect(name, price, type, location) {
+            if (!isLoggedIn) {
+                document.getElementById('loginModal').classList.remove('hidden');
+                return;
+            }
+            
+            // Show time slot selection
+            const timeSlots = ['Morning (9-12)', 'Afternoon (13-17)', 'Evening (18-22)'];
+            const hours = [3, 4, 4];
+            
+            let timeOptions = '';
+            timeSlots.forEach((slot, index) => {
+                const totalPrice = price * hours[index];
+                timeOptions += `<button onclick="confirmCompanionBooking('${name}', ${price}, '${type}', '${location}', '${slot}', ${hours[index]})" class="w-full bg-blue-100 hover:bg-blue-200 p-2 rounded mb-2 text-sm">${slot} - ${hours[index]} hours - $${totalPrice}</button>`;
+            });
+            
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl max-w-sm w-full p-6">
+                    <h3 class="font-bold text-lg mb-4">📅 Select Time Slot</h3>
+                    <div class="mb-4">
+                        <div class="font-medium">${name}</div>
+                        <div class="text-sm text-gray-600">${type.charAt(0).toUpperCase() + type.slice(1)} Companion • $${price}/hour</div>
+                        <div class="text-sm text-blue-600">📍 ${location}</div>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        ${timeOptions}
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="w-full bg-gray-300 text-gray-700 py-2 rounded-lg">
+                        Cancel
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function confirmCompanionBooking(name, price, type, location, timeSlot, hours) {
+            const totalPrice = price * hours;
+            
+            // Add to cart
+            const item = {
+                id: Date.now(),
+                name: `${type.charAt(0).toUpperCase() + type.slice(1)} Companion - ${name}`,
+                price: totalPrice,
+                location: `${location} • ${timeSlot}`,
+                quantity: 1
+            };
+            
+            cartItems.push(item);
+            updateCartDisplay();
+            updateCartBadge();
+            
+            // Remove modal
+            document.querySelector('.fixed.inset-0').remove();
+            
+            alert(`✅ Added to Cart!\n\nCompanion: ${name}\nService: ${type}\nLocation: ${location}\nTime: ${timeSlot}\nDuration: ${hours} hours\nTotal Price: $${totalPrice}`);
+        }
+
+        // Cart functions
+        function addToCart(serviceName, price, location) {
+            if (!isLoggedIn) {
+                document.getElementById('loginModal').classList.remove('hidden');
+                return;
+            }
+            
+            const item = {
+                id: Date.now(),
+                name: serviceName,
+                price: price,
+                location: location,
+                quantity: 1
+            };
+            
+            cartItems.push(item);
+            updateCartDisplay();
+            updateCartBadge();
+            
+            alert(`✅ Added to Cart!\n\n${serviceName}\nLocation: ${location}\nPrice: $${price}`);
+        }
+
+        function updateCartDisplay() {
+            const cartItemsDiv = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            const paymentSection = document.getElementById('paymentSection');
+            
+            if (cartItems.length === 0) {
+                cartItemsDiv.innerHTML = '<div class="text-sm text-gray-500 text-center py-8">Your cart is empty</div>';
+                cartTotal.classList.add('hidden');
+                paymentSection.classList.add('hidden');
+                return;
+            }
+            
+            let content = '';
+            let total = 0;
+            
+            cartItems.forEach(item => {
+                total += item.price * item.quantity;
+                content += `
+                    <div class="border rounded-lg p-3">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <div class="font-medium text-sm">${item.name}</div>
+                                <div class="text-xs text-gray-600">📍 ${item.location}</div>
+                                <div class="text-xs text-green-600">$${item.price}</div>
+                            </div>
+                            <button onclick="removeFromCart(${item.id})" class="text-red-500 text-xs">✕</button>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <button onclick="updateQuantity(${item.id}, -1)" class="bg-gray-200 w-6 h-6 rounded text-xs">-</button>
+                                <span class="text-sm">${item.quantity}</span>
+                                <button onclick="updateQuantity(${item.id}, 1)" class="bg-gray-200 w-6 h-6 rounded text-xs">+</button>
+                            </div>
+                            <div class="font-bold text-sm">$${item.price * item.quantity}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cartItemsDiv.innerHTML = content;
+            document.getElementById('totalAmount').textContent = '$' + total;
+            cartTotal.classList.remove('hidden');
+            paymentSection.classList.remove('hidden');
+        }
+
+        function updateCartBadge() {
+            const badge = document.getElementById('cartBadge');
+            if (cartItems.length > 0) {
+                badge.textContent = cartItems.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function removeFromCart(itemId) {
+            cartItems = cartItems.filter(item => item.id !== itemId);
+            updateCartDisplay();
+            updateCartBadge();
+        }
+
+        function updateQuantity(itemId, change) {
+            const item = cartItems.find(item => item.id === itemId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(itemId);
+                } else {
+                    updateCartDisplay();
+                }
+            }
+        }
+
+        function processPayment() {
+            const selectedPayment = document.querySelector('input[name="payment"]:checked').value;
+            const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            let paymentMethod = '';
+            switch(selectedPayment) {
+                case 'credit': paymentMethod = 'Credit Card'; break;
+                case 'promptpay': paymentMethod = 'PromptPay'; break;
+                case 'cash': paymentMethod = 'Cash on Delivery'; break;
+                case 'wellpoints': paymentMethod = 'WellPoints'; break;
+            }
+            
+            // Move cart items to bookings
+            cartItems.forEach(item => {
+                const booking = {
+                    id: 'PY' + Date.now() + Math.random().toString(36).substr(2, 5),
+                    service: item.name,
+                    price: item.price * item.quantity,
+                    date: new Date().toLocaleDateString(),
+                    status: 'Paid',
+                    paymentMethod: paymentMethod
+                };
+                userBookings.push(booking);
+            });
+            
+            // Clear cart
+            cartItems = [];
+            updateCartDisplay();
+            updateCartBadge();
+            updateBookingsList();
+            
+            alert(`✅ Payment Successful!\n\nTotal: $${total}\nPayment Method: ${paymentMethod}\n\nYour services have been booked!`);
+        }
+
+        function bookCompanion(name, price, type) {
+            const bookingId = 'CP' + Date.now();
+            const booking = {
+                id: bookingId,
+                service: `${type.charAt(0).toUpperCase() + type.slice(1)} Companion - ${name}`,
+                price: price,
+                date: new Date().toLocaleDateString(),
+                status: 'Confirmed'
+            };
+            
+            userBookings.push(booking);
+            updateBookingsList();
+            closeModal('companionModal');
+            
+            alert(`✅ Companion Booked!\n\nCompanion: ${name}\nService: ${type}\nPrice: $${price}/hour\nBooking ID: ${bookingId}`);
+        }
+
+        function updateBookingsList() {
+            const bookingsList = document.getElementById('bookingsList');
+            const homeBookingsList = document.getElementById('homeBookingsList');
+            
+            if (userBookings.length === 0) {
+                bookingsList.innerHTML = '<div class="text-sm text-gray-500 text-center py-4">No bookings yet</div>';
+                homeBookingsList.innerHTML = '<div class="text-sm text-gray-500 text-center py-4">No bookings yet</div>';
+                return;
+            }
+            
+            let content = '';
+            let homeContent = '';
+            
+            // Show all bookings in Services tab
+            userBookings.forEach(booking => {
+                const statusColor = booking.status === 'Paid' ? 'text-green-600' : booking.status === 'Confirmed' ? 'text-blue-600' : 'text-yellow-600';
+                content += `
+                    <div class="border rounded-lg p-3">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="font-medium text-sm">${booking.service}</div>
+                            <span class="text-xs ${statusColor}">${booking.status}</span>
+                        </div>
+                        <div class="text-xs text-gray-600">ID: ${booking.id}</div>
+                        <div class="text-xs text-gray-600">Date: ${booking.date}</div>
+                        <div class="text-xs text-gray-600">Price: $${booking.price}</div>
+                        ${booking.paymentMethod ? `<div class="text-xs text-blue-600">Payment: ${booking.paymentMethod}</div>` : ''}
+                        ${booking.status !== 'Paid' ? `<button onclick="cancelBooking('${booking.id}')" class="mt-2 bg-red-500 text-white px-2 py-1 rounded text-xs">Cancel</button>` : ''}
+                    </div>
+                `;
+            });
+            
+            // Show recent 3 bookings in Home tab
+            const recentBookings = userBookings.slice(-3);
+            recentBookings.forEach(booking => {
+                const statusColor = booking.status === 'Paid' ? 'text-green-600' : booking.status === 'Confirmed' ? 'text-blue-600' : 'text-yellow-600';
+                homeContent += `
+                    <div class="border rounded-lg p-2">
+                        <div class="flex items-center justify-between mb-1">
+                            <div class="font-medium text-xs">${booking.service}</div>
+                            <span class="text-xs ${statusColor}">${booking.status}</span>
+                        </div>
+                        <div class="text-xs text-gray-600">$${booking.price} • ${booking.date}</div>
+                        ${booking.paymentMethod ? `<div class="text-xs text-blue-600">${booking.paymentMethod}</div>` : ''}
+                    </div>
+                `;
+            });
+            
+            bookingsList.innerHTML = content;
+            homeBookingsList.innerHTML = homeContent || '<div class="text-sm text-gray-500 text-center py-4">No bookings yet</div>';
+        }
+
+        function cancelBooking(bookingId) {
+            if (confirm('Are you sure you want to cancel this booking?')) {
+                const booking = userBookings.find(b => b.id === bookingId);
+                userBookings = userBookings.filter(booking => booking.id !== bookingId);
+                updateBookingsList();
+                
+                // Refund WellPoints if applicable
+                if (booking && booking.price > 0) {
+                    const refundPoints = Math.floor(booking.price * 10); // 10 WP per dollar
+                    addWellPoints(refundPoints);
+                    alert(`✅ Booking cancelled successfully!\n\nRefund: +${refundPoints} WellPoints\nService: ${booking.service}`);
+                } else {
+                    alert('✅ Booking cancelled successfully!');
+                }
+            }
+        }
+
+        // Group functions
+        function createGroup() {
+            if (!isLoggedIn) {
+                document.getElementById('loginModal').classList.remove('hidden');
+                return;
+            }
+            
+            const groupName = prompt('Enter group name:');
+            if (groupName) {
+                const groupCode = groupName.substring(0, 2).toUpperCase() + '2024';
+                alert(`✅ Group "${groupName}" created successfully!\n\nGroup Code: ${groupCode}\nShare this code with friends to join your group.\n\nYou can now share locations and chat with group members.`);
+            }
+        }
+
+        function joinGroup() {
+            if (!isLoggedIn) {
+                document.getElementById('loginModal').classList.remove('hidden');
+                return;
+            }
+            
+            const groupCode = prompt('Enter group code:');
+            if (groupCode) {
+                alert(`✅ Successfully joined group!\n\nGroup Code: ${groupCode}\nYou can now see group members' locations and participate in group activities.`);
+            }
+        }
+
+        function shareGroupCode(code) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Join my MyWellhome group!',
+                    text: `Join my health group with code: ${code}`,
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(code).then(() => {
+                    alert(`Group code "${code}" copied to clipboard!\nShare it with friends to invite them to your group.`);
+                });
+            }
+        }
+
+        // Profile functions
+        function editGoals() {
+            alert('🎯 Edit Health Goals\n\nThis feature allows you to customize:\n• Daily step targets\n• Weight goals\n• Water intake goals\n• Exercise duration\n• Sleep targets\n\nFeature coming soon!');
+        }
+
+        function updateMedicalInfo() {
+            alert('📋 Update Medical Information\n\nYou can update:\n• Blood type\n• Allergies\n• Medical conditions\n• Emergency contacts\n• Insurance information\n\nFor security, please visit a partner hospital to update medical records.');
+        }
+
+        function toggleNotifications() {
+            notificationsEnabled = !notificationsEnabled;
+            const toggle = document.getElementById('notificationToggle');
+            toggle.textContent = notificationsEnabled ? 'เปิด' : 'ปิด';
+            toggle.className = notificationsEnabled ? 'bg-green-500 text-white px-3 py-1 rounded text-xs' : 'bg-gray-500 text-white px-3 py-1 rounded text-xs';
+        }
+
+        function viewAllRewards() {
+            alert('🎁 Weekly Rewards Available:\n\n🏥 Free Health Checkup - 5,000 WP\n💊 Medicine Discount 50% - 3,000 WP\n🍎 Nutrition Consultation - 2,500 WP\n💰 Cash 200 Baht - 2,000 WP\n🎯 Fitness Tracker - 4,000 WP\n🧘 Meditation Session - 1,500 WP\n\nYour current balance: 1,250 WP\nKeep earning points to unlock more rewards!');
+        }
+
+        // Position functions
+        function createGroup() {
+            if (!isLoggedIn) {
+                document.getElementById('loginModal').classList.remove('hidden');
+                return;
+            }
+            
+            const groupName = prompt('Enter group name:');
+            if (groupName) {
+                alert(`✅ Group "${groupName}" created successfully!\n\nYou can now invite friends to join and share locations.`);
+            }
+        }
+
+        function viewGroup(groupName) {
+            alert(`👥 ${groupName}\n\nMembers:\n• You (Admin)\n• Anna (Online)\n• John (Online)\n\n📍 All members are sharing locations\n🗺️ View on map to see everyone's position`);
+        }
+
+        function toggleLocationSharing() {
+            locationSharing = !locationSharing;
+            const toggle = document.getElementById('locationToggle');
+            toggle.textContent = locationSharing ? 'ON' : 'OFF';
+            toggle.className = locationSharing ? 'bg-green-500 text-white px-3 py-1 rounded text-xs' : 'bg-gray-500 text-white px-3 py-1 rounded text-xs';
+        }
+
+        function toggleAutoUpdate() {
+            autoUpdate = !autoUpdate;
+            const toggle = document.getElementById('autoUpdateToggle');
+            toggle.textContent = autoUpdate ? 'ON' : 'OFF';
+            toggle.className = autoUpdate ? 'bg-green-500 text-white px-3 py-1 rounded text-xs' : 'bg-gray-500 text-white px-3 py-1 rounded text-xs';
+        }
+
+        function quickQuestion(question) {
+            document.getElementById('chatInput').value = question;
+            sendMessage();
+        }
+
+        // Modal functions
+        function openCompanion() {
+            document.getElementById('companionModal').classList.remove('hidden');
+        }
+
+        function openInsurance() {
+            if (!isLoggedIn) {
+                document.getElementById('loginModal').classList.remove('hidden');
+                return;
+            }
+            
+            // Create ID card verification modal first
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl max-w-sm w-full p-6">
+                    <h3 class="font-bold text-lg mb-4 text-center">🆔 ยืนยันตัวตน</h3>
+                    <div class="space-y-4">
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                            <div class="text-center mb-3">
+                                <div class="text-4xl mb-2">📱</div>
+                                <div class="font-semibold text-yellow-800">กรุณาสแกนบัตรประชาชน</div>
+                                <div class="text-sm text-yellow-600 mt-1">เพื่อตรวจสอบสิทธิ์ประกันสังคม</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                            <h4 class="font-semibold text-blue-800 mb-2">📋 ข้อมูลที่ต้องการ</h4>
+                            <div class="text-sm text-blue-600 space-y-1">
+                                <div>• เลขบัตรประชาชน 13 หลัก</div>
+                                <div>• ชื่อ-นามสกุล</div>
+                                <div>• วันเกิด</div>
+                                <div>• ที่อยู่ปัจจุบัน</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+                            <h4 class="font-semibold text-green-800 mb-2">🔒 ความปลอดภัย</h4>
+                            <div class="text-sm text-green-600">
+                                ข้อมูลของคุณจะถูกเข้ารหัสและใช้เฉพาะการตรวจสอบสิทธิ์เท่านั้น
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <button onclick="scanIDCard()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium">
+                                📷 สแกนบัตรประชาชน
+                            </button>
+                            <button onclick="manualIDEntry()" class="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-lg">
+                                ⌨️ กรอกข้อมูลด้วยตนเอง
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button onclick="this.parentElement.parentElement.remove()" class="w-full bg-gray-300 text-gray-700 py-2 rounded-lg mt-4">
+                        ยกเลิก
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Feature functions
+        function openHealthCheck() {
+            if (!isLoggedIn) {
+                document.getElementById('loginModal').classList.remove('hidden');
+                return;
+            }
+            
+            // Create health check modal
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl max-w-sm w-full p-6">
+                    <h3 class="font-bold text-lg mb-4 text-center">🏃‍♂️ Health Check System</h3>
+                    <div class="space-y-4">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                            <h4 class="font-semibold text-blue-800 mb-2">📊 Available Tests</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between items-center">
+                                    <span>💓 Heart Rate Monitor</span>
+                                    <button onclick="startHealthTest('heart')" class="bg-blue-500 text-white px-2 py-1 rounded text-xs">Start</button>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>🩸 Blood Pressure</span>
+                                    <button onclick="startHealthTest('bp')" class="bg-red-500 text-white px-2 py-1 rounded text-xs">Start</button>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>🌡️ Body Temperature</span>
+                                    <button onclick="startHealthTest('temp')" class="bg-orange-500 text-white px-2 py-1 rounded text-xs">Start</button>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>⚖️ BMI Calculator</span>
+                                    <button onclick="startHealthTest('bmi')" class="bg-green-500 text-white px-2 py-1 rounded text-xs">Start</button>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>🫁 Oxygen Level</span>
+                                    <button onclick="startHealthTest('oxygen')" class="bg-purple-500 text-white px-2 py-1 rounded text-xs">Start</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+                            <h4 class="font-semibold text-green-800 mb-2">🎁 Rewards</h4>
+                            <div class="text-sm text-green-600">
+                                • Complete any test: +25 WP<br>
+                                • Complete all tests: +100 WP<br>
+                                • Daily health check: +50 WP
+                            </div>
+                        </div>
+                        
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                            <h4 class="font-semibold text-yellow-800 mb-2">📈 Health History</h4>
+                            <div class="text-sm text-yellow-600">
+                                View your health trends and get personalized recommendations based on your test results.
+                            </div>
+                            <button onclick="viewHealthHistory()" class="mt-2 bg-yellow-500 text-white px-3 py-1 rounded text-xs">View History</button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2 mt-4">
+                        <button onclick="startFullHealthCheck()" class="flex-1 bg-gradient-to-r from-green-500 to-blue-500 text-white py-2 rounded-lg font-medium">
+                            🏥 Full Health Check
+                        </button>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function openMealPlan() {
+            if (!isLoggedIn) {
+                document.getElementById('loginModal').classList.remove('hidden');
+                return;
+            }
+            
+            // Create meal planning modal
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl max-w-sm w-full p-6 max-h-96 overflow-y-auto">
+                    <h3 class="font-bold text-lg mb-4 text-center">🍎 Meal Planning System</h3>
+                    
+                    <div class="space-y-4">
+                        <!-- Goal Selection -->
+                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                            <h4 class="font-semibold text-purple-800 mb-2">🎯 Select Your Goal</h4>
+                            <div class="space-y-2">
+                                <button onclick="setMealGoal('weight_loss')" class="w-full bg-red-100 hover:bg-red-200 p-2 rounded text-sm text-left">
+                                    ⚖️ Weight Loss (1,200-1,500 cal/day)
+                                </button>
+                                <button onclick="setMealGoal('muscle_gain')" class="w-full bg-blue-100 hover:bg-blue-200 p-2 rounded text-sm text-left">
+                                    💪 Muscle Gain (2,000-2,500 cal/day)
+                                </button>
+                                <button onclick="setMealGoal('maintenance')" class="w-full bg-green-100 hover:bg-green-200 p-2 rounded text-sm text-left">
+                                    ⚖️ Maintain Weight (1,800-2,000 cal/day)
+                                </button>
+                                <button onclick="setMealGoal('healthy')" class="w-full bg-yellow-100 hover:bg-yellow-200 p-2 rounded text-sm text-left">
+                                    🌱 Healthy Living (Balanced nutrition)
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Today's Meal Plan -->
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+                            <h4 class="font-semibold text-green-800 mb-2">📋 Today's Meal Plan</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="border-l-4 border-orange-400 pl-2">
+                                    <div class="font-medium">🌅 Breakfast (7:00 AM)</div>
+                                    <div class="text-gray-600">Oatmeal + Berries + Almonds</div>
+                                    <div class="text-xs text-green-600">320 calories • 12g protein</div>
+                                </div>
+                                <div class="border-l-4 border-yellow-400 pl-2">
+                                    <div class="font-medium">🥪 Snack (10:00 AM)</div>
+                                    <div class="text-gray-600">Greek Yogurt + Honey</div>
+                                    <div class="text-xs text-green-600">150 calories • 15g protein</div>
+                                </div>
+                                <div class="border-l-4 border-blue-400 pl-2">
+                                    <div class="font-medium">🍽️ Lunch (12:30 PM)</div>
+                                    <div class="text-gray-600">Grilled Chicken + Brown Rice + Vegetables</div>
+                                    <div class="text-xs text-green-600">450 calories • 35g protein</div>
+                                </div>
+                                <div class="border-l-4 border-purple-400 pl-2">
+                                    <div class="font-medium">🍎 Snack (3:00 PM)</div>
+                                    <div class="text-gray-600">Apple + Peanut Butter</div>
+                                    <div class="text-xs text-green-600">200 calories • 8g protein</div>
+                                </div>
+                                <div class="border-l-4 border-red-400 pl-2">
+                                    <div class="font-medium">🌙 Dinner (7:00 PM)</div>
+                                    <div class="text-gray-600">Salmon + Quinoa + Steamed Broccoli</div>
+                                    <div class="text-xs text-green-600">380 calories • 28g protein</div>
+                                </div>
+                            </div>
+                            <div class="mt-2 p-2 bg-green-100 rounded text-xs">
+                                <strong>Total: 1,500 calories • 98g protein • 45g fiber</strong>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Actions -->
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                            <h4 class="font-semibold text-blue-800 mb-2">⚡ Quick Actions</h4>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="generateWeeklyPlan()" class="bg-blue-500 text-white px-2 py-1 rounded text-xs">
+                                    📅 Weekly Plan
+                                </button>
+                                <button onclick="customizeMeal()" class="bg-green-500 text-white px-2 py-1 rounded text-xs">
+                                    ✏️ Customize
+                                </button>
+                                <button onclick="shoppingList()" class="bg-orange-500 text-white px-2 py-1 rounded text-xs">
+                                    🛒 Shopping List
+                                </button>
+                                <button onclick="nutritionAnalysis()" class="bg-purple-500 text-white px-2 py-1 rounded text-xs">
+                                    📊 Nutrition
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Water & Exercise Reminders -->
+                        <div class="bg-cyan-50 border border-cyan-200 rounded-lg p-3">
+                            <h4 class="font-semibold text-cyan-800 mb-2">💧 Daily Reminders</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between items-center">
+                                    <span>💧 Water Intake (8 glasses)</span>
+                                    <div class="flex space-x-1">
+                                        <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                        <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                        <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                        <div class="w-3 h-3 bg-gray-300 rounded-full"></div>
+                                        <div class="w-3 h-3 bg-gray-300 rounded-full"></div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>🏃‍♂️ Exercise (30 min)</span>
+                                    <span class="text-green-600 text-xs">✅ Completed</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>😴 Sleep (8 hours)</span>
+                                    <span class="text-yellow-600 text-xs">⏰ Reminder set</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2 mt-4">
+                        <button onclick="saveMealPlan()" class="flex-1 bg-gradient-to-r from-green-500 to-blue-500 text-white py-2 rounded-lg font-medium">
+                            💾 Save Plan
+                        </button>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function bookCompanion() {
+            alert('✅ จองสำเร็จ!\n\n👥 นางสาวมาลี\n📅 วันนี้ 18:00-20:00 น.\n💰 400 บาท (2 ชั่วโมง)\n📍 สถานที่: ตามที่ตกลง\n\n📞 เบอร์ติดต่อ: 081-234-5678');
+            closeModal('companionModal');
+            addWellPoints(25);
+        }
+
+        function bookBed(hospital) {
+            const hospitals = {
+                'rama': 'โรงพยาบาลรามาธิบดี',
+                'chula': 'โรงพยาบาลจุฬาลงกรณ์'
+            };
+            alert(`✅ จองเตียงสำเร็จ!\n\n🏥 ${hospitals[hospital]}\n🛏️ เตียงหมายเลข: A-205\n📅 วันที่: ${new Date().toLocaleDateString('th-TH')}\n⏰ เวลา: 14:00 น.\n\n💳 ใช้สิทธิ์ประกันสังคม\n📞 โทร 02-xxx-xxxx เพื่อยืนยัน`);
+        }
+
+        function scanMedicine() {
+            alert('📷 เปิดกล้องสแกนยา...\n\n🔍 กำลังสแกน...\n✅ ตรวจพบ: พาราเซตามอล 500mg\n\n✅ ยาแท้ - ปลอดภัย\n🏭 ผลิตโดย: บริษัท ABC\n📅 หมดอายุ: 12/2025\n⚠️ ข้อควรระวัง: ไม่เกิน 8 เม็ด/วัน');
+        }
+
+        function consultDoctor() {
+            alert('👨‍⚕️ ระบบปรึกษาหมอ\n\n🔄 กำลังเชื่อมต่อกับแอดมิน...\n✅ พบแอดมินออนไลน์\n\n💬 แอดมิน: สวัสดีครับ มีอะไรให้ช่วยเหลือไหมครับ?\n\n📞 หรือโทร 1669 สำหรับเหตุฉุกเฉิน');
+        }
+
+        function joinChallenge() {
+            alert('🏆 เข้าร่วมการแข่งขัน!\n\n👥 ผู้เข้าร่วม: 1,247 คน\n🥇 อันดับปัจจุบัน: #156\n🎯 เป้าหมาย: 10,000 ก้าว\n\n🏃‍♂️ เดินต่อเพื่อขึ้นอันดับ!\n🎁 รางวัล: คูปองลด 500 บาท');
+        }
+
+        function addFriend() {
+            alert('👥 เพิ่มเพื่อนสำเร็จ!\n\n✅ เพิ่ม "อนันต์" เป็นเพื่อนแล้ว\n📍 ตำแหน่งปัจจุบัน: ห่าง 0.5 กม.\n🏃‍♂️ ชวนไปเดินออกกำลังกายด้วยกัน?\n\n+10 WellPoints สำหรับการเพิ่มเพื่อน!');
+            addWellPoints(10);
+        }
+
+        function redeemPoints() {
+            alert('💰 แลกของรางวัล\n\n🎁 รางวัลที่แลกได้:\n• เงินสด 100 บาท (1,000 WP)\n• คูปองโรงพยาบาล 200 บาท (1,500 WP)\n• อาหารเสริม (800 WP)\n• ตรวจสุขภาพฟรี (1,200 WP)\n\nWellPoints ปัจจุบัน: 1,250 WP');
+        }
+
+        // Step counter functionality
+        function syncSteps() {
+            const stepCount = document.getElementById('stepCount');
+            const distance = document.getElementById('distance');
+            const calories = document.getElementById('calories');
+            const activeTime = document.getElementById('activeTime');
+            
+            // Simulate step counting
+            let currentSteps = parseInt(stepCount.textContent.replace(',', ''));
+            let newSteps = currentSteps + Math.floor(Math.random() * 500) + 100;
+            
+            stepCount.textContent = newSteps.toLocaleString();
+            distance.textContent = (newSteps * 0.0008).toFixed(1); // Approximate km
+            calories.textContent = Math.floor(newSteps * 0.05); // Approximate calories
+            activeTime.textContent = Math.floor(newSteps * 0.01); // Approximate minutes
+            
+            // Award points for reaching milestones
+            if (newSteps >= 8000 && currentSteps < 8000) {
+                addWellPoints(100);
+                alert('🎉 Congratulations! You reached 8,000 steps today!\n+100 WellPoints earned!');
+            }
+            
+            alert('📱 Steps synced successfully!\n👟 Current steps: ' + newSteps.toLocaleString());
+        }
+
+        function toggleCategory(category) {
+            const programDiv = document.getElementById(category + '-programs');
+            const isHidden = programDiv.style.display === 'none';
+            
+            if (isHidden) {
+                programDiv.style.display = 'block';
+            } else {
+                programDiv.style.display = 'none';
+            }
+        }
+
+        function toggleFitnessCategory(category) {
+            const categoryDiv = document.getElementById(category + '-courses') || document.getElementById(category + '-recipes');
+            if (categoryDiv) {
+                const isHidden = categoryDiv.style.display === 'none';
+                
+                if (isHidden) {
+                    categoryDiv.style.display = 'block';
+                } else {
+                    categoryDiv.style.display = 'none';
+                }
+            }
+        }
+
+        function bookTrainer(trainerName, courseName, price, type) {
+            if (!isLoggedIn) {
+                document.getElementById('loginModal').classList.remove('hidden');
+                return;
+            }
+            
+            // Add to cart
+            const item = {
+                id: Date.now(),
+                name: `${courseName} - ${trainerName}`,
+                price: price,
+                location: `Online Course • Monthly Subscription`,
+                quantity: 1
+            };
+            
+            cartItems.push(item);
+            updateCartDisplay();
+            updateCartBadge();
+            
+            alert(`✅ Added to Cart!\n\nTrainer: ${trainerName}\nCourse: ${courseName}\nType: ${type}\nPrice: $${price}/month\n\nYou'll get access to live sessions and recorded videos!`);
+        }
+
+        function viewRecipe(recipeName) {
+            const recipes = {
+                'Low-Carb Buddha Bowl': {
+                    ingredients: ['1 cup quinoa', '1 avocado', '2 cups spinach', '1/2 cup chickpeas', '1 cup cherry tomatoes', '1 cucumber', 'Lemon dressing'],
+                    instructions: ['Cook quinoa according to package', 'Slice avocado and cucumber', 'Mix spinach with chickpeas', 'Arrange in bowl', 'Drizzle with lemon dressing'],
+                    nutrition: '320 calories, 12g protein, 8g fiber'
+                },
+                'Grilled Salmon with Vegetables': {
+                    ingredients: ['200g salmon fillet', '1 cup broccoli', '1 bell pepper', '2 tbsp olive oil', '2 cloves garlic', 'Mixed herbs'],
+                    instructions: ['Season salmon with herbs', 'Grill salmon 4-5 min each side', 'Steam vegetables', 'Sauté garlic in olive oil', 'Serve together'],
+                    nutrition: '280 calories, 25g protein, 18g healthy fats'
+                },
+                'Green Detox Smoothie': {
+                    ingredients: ['2 cups spinach', '1 banana', '1 apple', '1 inch ginger', '1 lemon juice', '1 cup coconut water'],
+                    instructions: ['Wash all ingredients', 'Add to blender', 'Blend until smooth', 'Add ice if desired', 'Serve immediately'],
+                    nutrition: '150 calories, 4g protein, 6g fiber'
+                },
+                'Protein Power Bowl': {
+                    ingredients: ['150g grilled chicken', '1 cup brown rice', '1/2 cup black beans', '1 sweet potato', '1/4 cup Greek yogurt'],
+                    instructions: ['Cook brown rice', 'Grill chicken breast', 'Roast sweet potato', 'Heat black beans', 'Assemble in bowl with yogurt'],
+                    nutrition: '450 calories, 35g protein, 12g fiber'
+                },
+                'Energy Balls': {
+                    ingredients: ['1 cup dates', '1/2 cup almonds', '1/4 cup oats', '2 tbsp chia seeds', '2 tbsp coconut flakes'],
+                    instructions: ['Soak dates for 10 min', 'Blend all ingredients', 'Roll into balls', 'Refrigerate 30 min', 'Store in fridge'],
+                    nutrition: '120 calories per ball, 3g protein, 4g fiber'
+                }
+            };
+            
+            const recipe = recipes[recipeName];
+            if (recipe) {
+                alert(`🍽️ ${recipeName}\n\n📝 Ingredients:\n${recipe.ingredients.join('\n')}\n\n👩‍🍳 Instructions:\n${recipe.instructions.join('\n')}\n\n📊 Nutrition:\n${recipe.nutrition}`);
+            }
+        }
+
+        function scanIngredients() {
+            alert('📷 Opening ingredient scanner...\n\n🔍 Scanning...\n✅ Detected: Tomatoes, Onions, Garlic, Chicken\n\n💡 Suggested recipes:\n• Chicken Stir-fry\n• Tomato Chicken Curry\n• Garlic Herb Chicken\n\nNutritional analysis:\n🔥 High protein, Low carb\n✅ Great for muscle building!');
+        }
+
+        function suggestRecipe(ingredients) {
+            const suggestions = {
+                'carrots,spinach,chicken': 'Healthy Chicken & Veggie Stir-fry\n🔥 280 calories\n🏋️ 28g protein\n\nPerfect for post-workout meal!',
+                'banana,milk,almonds': 'Protein Smoothie Bowl\n🔥 220 calories\n🏋️ 15g protein\n\nGreat for breakfast or pre-workout!'
+            };
+            
+            const key = ingredients.join(',');
+            const suggestion = suggestions[key] || 'Custom healthy recipe based on your ingredients!\n\nHigh in nutrients and perfect for your fitness goals.';
+            
+            alert(`🍽️ Recipe Suggestion:\n\n${suggestion}\n\nWould you like the full recipe with cooking instructions?`);
+        }
+
+        function viewAllFriends() {
+            alert('👥 Friends Nearby:\n\n🟢 Anna (0.5km) - Online\n• Last workout: Yoga (2 hours ago)\n• Challenge: 8,000 steps\n\n🟢 John (1.2km) - Online\n• Last workout: HIIT (1 hour ago)\n• Challenge: Weight loss\n\n🟡 Mary (2.1km) - Away\n• Last workout: Pilates (yesterday)\n• Challenge: Flexibility\n\n💬 Send workout invites or join their challenges!');
+        }
+
+        // Health Check Functions
+        function startHealthTest(testType) {
+            const tests = {
+                heart: { name: 'Heart Rate Monitor', unit: 'bpm', normalRange: '60-100' },
+                bp: { name: 'Blood Pressure', unit: 'mmHg', normalRange: '120/80' },
+                temp: { name: 'Body Temperature', unit: '°C', normalRange: '36.1-37.2' },
+                bmi: { name: 'BMI Calculator', unit: 'kg/m²', normalRange: '18.5-24.9' },
+                oxygen: { name: 'Oxygen Level', unit: '%', normalRange: '95-100' }
+            };
+            
+            const test = tests[testType];
+            
+            // Simulate test progress
+            const progressModal = document.createElement('div');
+            progressModal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            progressModal.innerHTML = `
+                <div class="bg-white rounded-xl max-w-sm w-full p-6 text-center">
+                    <h3 class="font-bold text-lg mb-4">${test.name}</h3>
+                    <div class="text-6xl mb-4">📊</div>
+                    <div class="text-sm text-gray-600 mb-4">กำลังวัด... กรุณารอสักครู่</div>
+                    <div class="bg-gray-200 rounded-full h-2 mb-4">
+                        <div id="progressBar" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <div id="progressText" class="text-sm text-gray-500">0%</div>
+                </div>
+            `;
+            document.body.appendChild(progressModal);
+            
+            // Animate progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15 + 5;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        showTestResult(testType, test);
+                        progressModal.remove();
+                    }, 500);
+                }
+                document.getElementById('progressBar').style.width = progress + '%';
+                document.getElementById('progressText').textContent = Math.floor(progress) + '%';
+            }, 200);
+        }
+        
+        function showTestResult(testType, test) {
+            // Generate realistic test results
+            const results = {
+                heart: Math.floor(Math.random() * 40) + 60, // 60-100 bpm
+                bp: `${Math.floor(Math.random() * 40) + 110}/${Math.floor(Math.random() * 20) + 70}`, // 110-150/70-90
+                temp: (Math.random() * 1.5 + 36).toFixed(1), // 36.0-37.5°C
+                bmi: (Math.random() * 10 + 18).toFixed(1), // 18-28 kg/m²
+                oxygen: Math.floor(Math.random() * 6) + 95 // 95-100%
+            };
+            
+            const result = results[testType];
+            const isNormal = checkNormalRange(testType, result);
+            
+            const resultModal = document.createElement('div');
+            resultModal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            resultModal.innerHTML = `
+                <div class="bg-white rounded-xl max-w-sm w-full p-6">
+                    <h3 class="font-bold text-lg mb-4 text-center">${test.name} Results</h3>
+                    <div class="text-center mb-4">
+                        <div class="text-4xl mb-2">${isNormal ? '✅' : '⚠️'}</div>
+                        <div class="text-3xl font-bold ${isNormal ? 'text-green-600' : 'text-orange-600'} mb-2">
+                            ${result} ${test.unit}
+                        </div>
+                        <div class="text-sm text-gray-600">
+                            Normal Range: ${test.normalRange} ${test.unit}
+                        </div>
+                    </div>
+                    
+                    <div class="${isNormal ? 'bg-green-50 border-green-200' : 'bg-orange-50 border-orange-200'} border rounded-lg p-3 mb-4">
+                        <div class="font-semibold ${isNormal ? 'text-green-800' : 'text-orange-800'} mb-2">
+                            ${isNormal ? '✅ ผลปกติ' : '⚠️ ควรปรึกษาแพทย์'}
+                        </div>
+                        <div class="text-sm ${isNormal ? 'text-green-600' : 'text-orange-600'}">
+                            ${isNormal ? 'ค่าของคุณอยู่ในเกณฑ์ปกติ' : 'ค่าอาจผิดปกติ แนะนำให้ปรึกษาแพทย์'}
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                        <div class="font-semibold text-blue-800 mb-2">💡 คำแนะนำ</div>
+                        <div class="text-sm text-blue-600">
+                            ${getHealthAdvice(testType, isNormal)}
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <button onclick="saveTestResult('${testType}', '${result}')" class="flex-1 bg-green-500 text-white py-2 rounded-lg">
+                            💾 บันทึกผล
+                        </button>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg">
+                            ปิด
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(resultModal);
+        }
+        
+        function checkNormalRange(testType, result) {
+            switch(testType) {
+                case 'heart': return result >= 60 && result <= 100;
+                case 'bp': 
+                    const [systolic, diastolic] = result.split('/').map(Number);
+                    return systolic <= 140 && diastolic <= 90;
+                case 'temp': return parseFloat(result) >= 36.1 && parseFloat(result) <= 37.2;
+                case 'bmi': return parseFloat(result) >= 18.5 && parseFloat(result) <= 24.9;
+                case 'oxygen': return result >= 95;
+                default: return true;
+            }
+        }
+        
+        function getHealthAdvice(testType, isNormal) {
+            const advice = {
+                heart: isNormal ? 'รักษาการออกกำลังกายสม่ำเสมอ หลีกเลี่ยงความเครียด' : 'หลีกเลี่ยงคาเฟอีน ออกกำลังกายเบาๆ ปรึกษาแพทย์',
+                bp: isNormal ? 'รับประทานอาหารเค็มน้อย ออกกำลังกายสม่ำเสมอ' : 'ลดเกลือ ลดความเครียด ตรวจติดตาม',
+                temp: isNormal ? 'ดูแลสุขภาพให้แข็งแรง พักผ่อนเพียงพอ' : 'ดื่มน้ำมากๆ พักผ่อน หากมีไข้สูงให้พบแพทย์',
+                bmi: isNormal ? 'รักษาน้ำหนักให้คงที่ ออกกำลังกายสม่ำเสมอ' : 'ควบคุมอาหาร เพิ่มการออกกำลังกาย',
+                oxygen: isNormal ? 'ปอดแข็งแรงดี หายใจลึกๆ สม่ำเสมอ' : 'หายใจลึกๆ หลีกเลี่ยงควัน ปรึกษาแพทย์'
+            };
+            return advice[testType] || 'ดูแลสุขภาพให้ดี';
+        }
+        
+        function saveTestResult(testType, result) {
+            addWellPoints(25);
+            alert(`✅ บันทึกผลการตรวจสำเร็จ!\n\n${testType}: ${result}\n+25 WellPoints\n\nผลการตรวจจะถูกเก็บไว้ในประวัติสุขภาพของคุณ`);
+            document.querySelector('.fixed.inset-0').remove();
+        }
+        
+        function startFullHealthCheck() {
+            alert('🏥 เริ่มการตรวจสุขภาพแบบเต็ม\n\nจะทำการตรวจ:\n• Heart Rate\n• Blood Pressure\n• Body Temperature\n• BMI\n• Oxygen Level\n\nใช้เวลาประมาณ 10 นาที\n+100 WellPoints เมื่อเสร็จสิ้น');
+            document.querySelector('.fixed.inset-0').remove();
+        }
+        
+        function viewHealthHistory() {
+            alert('📈 ประวัติสุขภาพ\n\n📊 ผลการตรวจล่าสุด:\n• Heart Rate: 72 bpm (ปกติ)\n• Blood Pressure: 118/76 mmHg (ปกติ)\n• BMI: 22.5 kg/m² (ปกติ)\n• Temperature: 36.8°C (ปกติ)\n\n📅 การตรวจครั้งสุดท้าย: วันนี้\n🎯 แนวโน้ม: สุขภาพดีขึ้น');
+        }
+        
+        // Meal Planning Functions
+        function setMealGoal(goal) {
+            const goals = {
+                weight_loss: 'ลดน้ำหนัก (1,200-1,500 แคลอรี่/วัน)',
+                muscle_gain: 'เพิ่มกล้ามเนื้อ (2,000-2,500 แคลอรี่/วัน)',
+                maintenance: 'รักษาน้ำหนัก (1,800-2,000 แคลอรี่/วัน)',
+                healthy: 'สุขภาพดี (โภชนาการสมดุล)'
+            };
+            
+            alert(`🎯 เลือกเป้าหมาย: ${goals[goal]}\n\nระบบจะปรับแผนอาหารให้เหมาะสมกับเป้าหมายของคุณ\n\n+10 WellPoints สำหรับการตั้งเป้าหมาย!`);
+            addWellPoints(10);
+        }
+        
+        function generateWeeklyPlan() {
+            alert('📅 แผนอาหารรายสัปดาห์\n\n🗓️ สัปดาห์นี้:\n• จันทร์: ไก่ย่าง + ข้าวกล้อง\n• อังคาร: ปลาแซลมอน + ผัก\n• พุธ: เต้าหู้ + สลัด\n• พฤหัส: เนื้อวัว + ข้าวโอ๊ต\n• ศุกร์: ไข่ + ผลไม้\n• เสาร์: อาหารทะเล + ผัก\n• อาทิตย์: ไก่ต้ม + ข้าวกล้อง\n\n💾 บันทึกแผนแล้ว!');
+        }
+        
+        function customizeMeal() {
+            alert('✏️ ปรับแต่งอาหาร\n\n🔧 คุณสามารถ:\n• เปลี่ยนเมนูอาหาร\n• ปรับปริมาณแคลอรี่\n• เลือกอาหารที่ชอบ\n• หลีกเลี่ยงอาหารที่แพ้\n• กำหนดเวลาทานอาหาร\n\nระบบจะปรับให้เหมาะกับคุณ!');
+        }
+        
+        function shoppingList() {
+            alert('🛒 รายการซื้อของ\n\n📝 สำหรับสัปดาห์นี้:\n• ข้าวกล้อง 2 กก.\n• ไก่สด 1 กก.\n• ปลาแซลมอน 500 กรัม\n• ผักรวม 2 กก.\n• ผลไม้ 1 กก.\n• ไข่ไก่ 10 ฟอง\n• นม 2 ลิตร\n• ถั่ว 500 กรัม\n\n💰 ประมาณ 800 บาท');
+        }
+        
+        function nutritionAnalysis() {
+            alert('📊 วิเคราะห์โภชนาการ\n\n📈 วันนี้:\n• แคลอรี่: 1,500/1,500 ✅\n• โปรตีน: 98g/100g ✅\n• คาร์โบไฮเดรต: 180g/200g ✅\n• ไขมัน: 50g/60g ✅\n• ไฟเบอร์: 45g/25g ✅\n• น้ำ: 6/8 แก้ว ⚠️\n\n💡 ดื่มน้ำเพิ่มอีก 2 แก้ว!');
+        }
+        
+        function saveMealPlan() {
+            addWellPoints(30);
+            alert('💾 บันทึกแผนอาหารสำเร็จ!\n\n✅ แผนอาหารถูกบันทึกแล้ว\n🔔 จะแจ้งเตือนเวลาทานอาหาร\n📱 สามารถดูในแอปได้ตลอดเวลา\n\n+30 WellPoints สำหรับการวางแผน!');
+            document.querySelector('.fixed.inset-0').remove();
+        }
+        
+        // Insurance Functions
+        function scanIDCard() {
+            // Simulate ID card scanning
+            const scanModal = document.createElement('div');
+            scanModal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            scanModal.innerHTML = `
+                <div class="bg-white rounded-xl max-w-sm w-full p-6 text-center">
+                    <h3 class="font-bold text-lg mb-4">📷 สแกนบัตรประชาชน</h3>
+                    <div class="bg-gray-100 h-48 rounded-lg mb-4 flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">📱</div>
+                            <div class="text-sm text-gray-600">วางบัตรประชาชนในกรอบ</div>
+                            <div class="mt-4">
+                                <div class="border-2 border-dashed border-blue-400 w-32 h-20 mx-auto rounded flex items-center justify-center">
+                                    <span class="text-xs text-blue-600">บัตรประชาชน</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600 mb-4">กำลังสแกน...</div>
+                    <div class="bg-blue-200 rounded-full h-2 mb-4">
+                        <div id="scanProgress" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(scanModal);
+            
+            // Simulate scanning progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 20 + 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        scanModal.remove();
+                        document.querySelector('.fixed.inset-0').remove(); // Remove ID verification modal
+                        showInsuranceResults();
+                    }, 500);
+                }
+                document.getElementById('scanProgress').style.width = progress + '%';
+            }, 300);
+        }
+        
+        function manualIDEntry() {
+            const entryModal = document.createElement('div');
+            entryModal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            entryModal.innerHTML = `
+                <div class="bg-white rounded-xl max-w-sm w-full p-6">
+                    <h3 class="font-bold text-lg mb-4 text-center">⌨️ กรอกข้อมูลด้วยตนเอง</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">เลขบัตรประชาชน</label>
+                            <input type="text" id="idNumber" class="w-full border rounded-lg px-3 py-2" placeholder="1-2345-67890-12-3" maxlength="17">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">ชื่อ-นามสกุล</label>
+                            <input type="text" id="fullName" class="w-full border rounded-lg px-3 py-2" placeholder="นาย สมชาย ใจดี">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">วันเกิด</label>
+                            <input type="date" id="birthDate" class="w-full border rounded-lg px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">เบอร์โทรศัพท์</label>
+                            <input type="tel" id="phoneNumber" class="w-full border rounded-lg px-3 py-2" placeholder="081-234-5678">
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2 mt-4">
+                        <button onclick="verifyManualID()" class="flex-1 bg-blue-500 text-white py-2 rounded-lg">
+                            ✅ ยืนยันข้อมูล
+                        </button>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg">
+                            ยกเลิก
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(entryModal);
+        }
+        
+        function verifyManualID() {
+            const idNumber = document.getElementById('idNumber').value;
+            const fullName = document.getElementById('fullName').value;
+            const birthDate = document.getElementById('birthDate').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            
+            if (!idNumber || !fullName || !birthDate || !phoneNumber) {
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
+            
+            // Simulate verification
+            setTimeout(() => {
+                document.querySelector('.fixed.inset-0').remove(); // Remove manual entry modal
+                document.querySelector('.fixed.inset-0').remove(); // Remove ID verification modal
+                showInsuranceResults();
+            }, 1000);
+        }
+        
+        function showInsuranceResults() {
+            document.getElementById('insuranceModal').classList.remove('hidden');
+        }
+
+        // Utility functions
+        function addWellPoints(points) {
+            wellPoints += points;
+            document.getElementById('wellpoints').textContent = wellPoints.toLocaleString();
+        }
+
+        function changeFontSize(size) {
+            const body = document.body;
+            body.classList.remove('text-lg', 'text-xl');
+            if (size === 'large') body.classList.add('text-lg');
+            if (size === 'xlarge') body.classList.add('text-xl');
+        }
+
+        function toggleVoice() {
+            voiceEnabled = !voiceEnabled;
+            event.target.textContent = voiceEnabled ? 'เปิด' : 'ปิด';
+            event.target.className = voiceEnabled ? 'bg-green-500 text-white px-3 py-1 rounded text-xs' : 'bg-gray-500 text-white px-3 py-1 rounded text-xs';
+        }
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'th-TH';
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        function toggleLanguage() {
+            const languages = ['TH', 'LO', 'KM', 'MY'];
+            const currentIndex = languages.indexOf(currentLanguage.toUpperCase());
+            const nextIndex = (currentIndex + 1) % languages.length;
+            currentLanguage = languages[nextIndex];
+            document.getElementById('currentLang').textContent = currentLanguage;
+        }
+
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            document.getElementById('currentLang').textContent = lang.toUpperCase();
+            // Here you would implement actual language switching
+            alert(`เปลี่ยนภาษาเป็น ${lang === 'th' ? 'ไทย' : lang === 'lo' ? 'ลาว' : lang === 'km' ? 'เขมร' : 'พม่า'} แล้ว`);
+        }
+
+        function viewAllBookings() {
+            showTab('services');
+            // Scroll to bookings section
+            setTimeout(() => {
+                const bookingsSection = document.getElementById('bookingsList').parentElement;
+                bookingsSection.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add welcome message to chat
+            setTimeout(() => {
+                addChatMessage('Welcome to MyWellhome! 🏥✨ How can I help you today?', 'ai');
+            }, 500);
+            
+            // Show login modal on startup
+            setTimeout(() => {
+                if (!isLoggedIn) {
+                    document.getElementById('loginModal').classList.remove('hidden');
+                }
+            }, 1000);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'968341fc279a7996',t:'MTc1NDAyOTUyMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
